@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+// Represents the user interface for the Pomodoro application.
+// Allows users to set up work sessions, take breaks, and manage tasks.
 public class PomodoroApp {
     private PomodoroSession session;
     private Statistics statistics;
@@ -68,6 +70,17 @@ public class PomodoroApp {
         int longBreak = input.nextInt();
         input.nextLine();
         statistics = new Statistics();
+        collectTasks();
+        session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);
+    }
+
+    /*
+     * REQUIRES: The number of tasks entered by the user is a non-negative integer
+     * MODIFIES: this
+     * EFFECTS: Prompts the user to input the number of tasks and their names.
+     *          Initializes and adds the tasks to the task list.
+     */
+    public void collectTasks() {
         System.out.println("How many tasks do you want to finish?: ");
         taskList = new ArrayList<>();
         int num = input.nextInt();
@@ -78,7 +91,6 @@ public class PomodoroApp {
             task = new Task(name);
             taskList.add(task);
         }
-        session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);
     }
 
     /*

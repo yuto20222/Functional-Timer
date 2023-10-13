@@ -1,5 +1,7 @@
 package model;
 
+// Represents the statistics related to work sessions.
+// Keeps track of the number of completed sessions and the total work time.
 public class Statistics {
     private int completedSessions;
     private int totalWorkTime;
@@ -14,7 +16,6 @@ public class Statistics {
     }
 
     /*
-     * REQUIRES: workDuration is a positive integer
      * MODIFIES: this
      * EFFECTS: Increments the number of completed sessions by one
      */

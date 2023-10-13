@@ -1,5 +1,7 @@
 package model;
 
+// Represents a task with a specific name.
+// Keeps track of the task's completion status.
 public class Task {
     private String taskName;
     private boolean isCompleted;
