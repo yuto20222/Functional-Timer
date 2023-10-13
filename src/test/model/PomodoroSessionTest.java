@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PomodoroSessionTest {
     private PomodoroSession testPomodoro;
     private Statistics testStat;
-
     @BeforeEach
     void runBefore() {
         testStat = new Statistics();
@@ -14,23 +13,57 @@ public class PomodoroSessionTest {
     }
     @Test
     void testConstructor() {
-        assertEquals(20, testPomodoro.getWorkDuration());
-        assertEquals(4, testPomodoro.getShortBreakDuration());
-        assertEquals(8, testPomodoro.getLongBreakDuration());
+        assertEquals(1200, testPomodoro.getWorkDuration());
+        assertEquals(240, testPomodoro.getShortBreakDuration());
+        assertEquals(480, testPomodoro.getLongBreakDuration());
     }
 
     @Test
     void testConstructorNegativeNum() {
         testPomodoro = new PomodoroSession(-1,-1, -1, testStat);
-        assertEquals(25, testPomodoro.getWorkDuration());
-        assertEquals(5, testPomodoro.getShortBreakDuration());
-        assertEquals(10, testPomodoro.getLongBreakDuration());
+        assertEquals(1500, testPomodoro.getWorkDuration());
+        assertEquals(300, testPomodoro.getShortBreakDuration());
+        assertEquals(600, testPomodoro.getLongBreakDuration());
     }
 
     @Test
-    void testWorkEnd() {
-        assertEquals(4, testPomodoro.workEnd());
-        assertEquals(4, testPomodoro.workEnd());
-        assertEquals(8, testPomodoro.workEnd());
+    public void testStartWork() {
+        testPomodoro.startWork();
+        assertTrue(testPomodoro.isRunning());
+        assertFalse(testPomodoro.isOnBreak());
+    }
+
+    @Test
+    public void testStartTimer() {
+        testPomodoro.startWork();
+        assertEquals(1200, testPomodoro.getCurrentDuration());
+        assertFalse(testPomodoro.isOnBreak());
+    }
+
+    @Test
+    public void testStartShortBreak() {
+        testPomodoro.startLongBreak();
+        assertTrue(testPomodoro.isRunning());
+        assertTrue(testPomodoro.isOnBreak());
+    }
+    @Test
+    public void testStartLongBreak() {
+        testPomodoro.startLongBreak();
+        assertTrue(testPomodoro.isRunning());
+        assertTrue(testPomodoro.isOnBreak());
+    }
+
+    @Test
+    public void testStop() {
+        testPomodoro.stop();
+        assertFalse(testPomodoro.isRunning());
+    }
+
+    @Test
+    public void testResetTimer() {
+        testPomodoro.resetTimer();
+        assertEquals(1200, testPomodoro.getWorkDuration());
+        assertFalse(testPomodoro.isRunning());
+        assertFalse(testPomodoro.isOnBreak());
     }
 }
