@@ -3,6 +3,8 @@ package model;
 import java.util.Timer;
 import java.util.TimerTask;
 
+// Represents a Pomodoro work session with configurable work and break durations.
+// Allows starting, stopping, and resetting of the timer and keeps track of session statistics.
 public class PomodoroSession {
     // delete or rename this class!
     private int workDuration;
