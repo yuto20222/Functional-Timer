@@ -34,6 +34,14 @@ public class PomodoroSessionTest {
     }
 
     @Test
+    public void testStartTimerDecreasesCurrentDuration() throws InterruptedException {
+        testPomodoro.startWork();
+        int initialDuration = testPomodoro.getCurrentDuration();
+        Thread.sleep(2000); // wait for two seconds
+        assertTrue(testPomodoro.getCurrentDuration() < initialDuration);
+    }
+
+    @Test
     public void testStartTimer() {
         testPomodoro.startWork();
         assertEquals(1200, testPomodoro.getCurrentDuration());
@@ -42,7 +50,7 @@ public class PomodoroSessionTest {
 
     @Test
     public void testStartShortBreak() {
-        testPomodoro.startLongBreak();
+        testPomodoro.startShortBreak();
         assertTrue(testPomodoro.isRunning());
         assertTrue(testPomodoro.isOnBreak());
     }
@@ -65,5 +73,25 @@ public class PomodoroSessionTest {
         assertEquals(1200, testPomodoro.getWorkDuration());
         assertFalse(testPomodoro.isRunning());
         assertFalse(testPomodoro.isOnBreak());
+    }
+
+    @Test
+    public void testEndWorkAfterOneSession() {
+        testPomodoro.startWork();
+        testPomodoro.endWork();
+        assertTrue(testPomodoro.isOnBreak());
+        assertEquals(testPomodoro.getShortBreakDuration(), testPomodoro.getCurrentDuration());
+        assertEquals(1, testStat.getCompletedSessions());
+    }
+
+    @Test
+    public void testEndWorkAfterThreeSessions() {
+        for (int i = 0; i < 3; i++) {
+            testPomodoro.startWork();
+            testPomodoro.endWork();
+        }
+        assertTrue(testPomodoro.isOnBreak());
+        assertEquals(testPomodoro.getLongBreakDuration(), testPomodoro.getCurrentDuration());
+        assertEquals(3, testStat.getCompletedSessions());
     }
 }
