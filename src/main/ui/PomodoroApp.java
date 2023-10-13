@@ -13,10 +13,9 @@ import java.util.Scanner;
 public class PomodoroApp {
     private PomodoroSession session;
     private Statistics statistics;
-    private Task task;
     private List<Task> taskList;
 
-    private Scanner input;
+    private final Scanner input;
 
     /*
      * MODIFIES: this
@@ -50,7 +49,11 @@ public class PomodoroApp {
         System.out.println("If you want to see the statistic of your work, press 3");
         System.out.println("If you want to finish one task, press 4 to erase it");
         int command = input.nextInt();
-        options(command);
+        if (command == 1 || command == 2) {
+            options1(command);
+        } else {
+            options2(command);
+        }
     }
 
     /*
@@ -88,19 +91,18 @@ public class PomodoroApp {
         for (int i = 0; i < num; i++) {
             System.out.println("What's the name of task?: ");
             String name = input.nextLine();
-            task = new Task(name);
+            Task task = new Task(name);
             taskList.add(task);
         }
     }
 
     /*
-     * REQUIRES: command is an integer between 1 and 4
+     * REQUIRES: command is an integer between 1 and 2
      * MODIFIES: this
      * EFFECTS: Handles the user's chosen command from the menu.
-     *          Depending on the command, it will reset the timer, stop the timer,
-     *          display statistics, or mark a task as completed.
+     *          Depending on the command, it will reset the timer, stop the timer.
      */
-    public void options(int command) {
+    public void options1(int command) {
         switch (command) {
             case 1:
                 session.resetTimer();
@@ -108,14 +110,27 @@ public class PomodoroApp {
                 if (input.nextInt() == 1) {
                     session.startWork();
                 }
+                break;
             case 2:
                 session.stop();
                 System.out.println("Great Work!!");
                 break;
+        }
+    }
+
+    /*
+     * REQUIRES: command is an integer between 3 and 4
+     * MODIFIES: this
+     * EFFECTS: Handles the user's chosen command from the menu.
+     *          Depending on the command, it will display statistics, or mark a task as completed.
+     */
+    public void options2(int command) {
+        switch (command) {
             case 3:
                 System.out.println("the number of finished session: " + statistics.getCompletedSessions());
                 System.out.println("the length of working time is : " + statistics.getTotalWorkTime());
                 choose();
+                break;
             case 4:
                 System.out.println("Which task? From the top, what number is it?");
                 int index = input.nextInt();
@@ -123,6 +138,7 @@ public class PomodoroApp {
                 finishedTask.isCompleted();
                 System.out.println("Good job");
                 choose();
+                break;
         }
     }
 }

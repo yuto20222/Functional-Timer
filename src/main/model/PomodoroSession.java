@@ -7,14 +7,14 @@ import java.util.TimerTask;
 // Allows starting, stopping, and resetting of the timer and keeps track of session statistics.
 public class PomodoroSession {
     // delete or rename this class!
-    private int workDuration;
-    private int shortBreakDuration;
-    private int longBreakDuration;
+    private final int workDuration;
+    private final int shortBreakDuration;
+    private final int longBreakDuration;
 
     private int currentDuration;
     private boolean isRunning;
     private boolean isOnBreak;
-    private Statistics stat;
+    private final Statistics stat;
     private Timer timer;
 
     /*
@@ -68,6 +68,7 @@ public class PomodoroSession {
             timer.cancel();
             timer = new Timer();
         }
+        assert timer != null;
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
