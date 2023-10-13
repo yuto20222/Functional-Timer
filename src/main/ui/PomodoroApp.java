@@ -114,6 +114,7 @@ public class PomodoroApp {
             case 2:
                 session.stop();
                 System.out.println("Great Work!!");
+                choose();
                 break;
         }
     }
@@ -128,7 +129,7 @@ public class PomodoroApp {
         switch (command) {
             case 3:
                 System.out.println("the number of finished session: " + statistics.getCompletedSessions());
-                System.out.println("the length of working time is : " + statistics.getTotalWorkTime());
+                System.out.println("the length of working time is : " + statistics.getTotalWorkTime() + "seconds");
                 choose();
                 break;
             case 4:
