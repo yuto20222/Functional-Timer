@@ -16,17 +16,32 @@ public class PomodoroApp {
 
     private Scanner input;
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes the input scanner and runs the application.
+     */
     public PomodoroApp() {
         input = new Scanner(System.in);
         runApp();
     }
 
+
+    /*
+     * MODIFIES: this
+     * EFFECTS: Starts the application by setting up the initial settings and starting the work session.
+     *          Then prompts the user for further actions.
+     */
     private void runApp() {
         firstSetting();
         session.startWork();
         choose();
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Displays a menu to the user and prompts them to choose an option.
+     *          The user can reset the timer, stop the timer, view statistics, or finish a task.
+     */
     public void choose() {
         System.out.println("If you want to reset the timer, press 1");
         System.out.println("If you want to stop the timer, press 2");
@@ -36,6 +51,12 @@ public class PomodoroApp {
         options(command);
     }
 
+    /*
+     * REQUIRES: workDuration, shortBreak, and longBreak are non-negative integers
+     * MODIFIES: this
+     * EFFECTS: Sets up the initial settings for the Pomodoro session.
+     *          Asks the user for work duration, short break duration, long break duration, and tasks.
+     */
     public void firstSetting() {
         System.out.println("How long do you want to work in one session: ");
         int workDuration = input.nextInt();
@@ -60,6 +81,13 @@ public class PomodoroApp {
         session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);
     }
 
+    /*
+     * REQUIRES: command is an integer between 1 and 4
+     * MODIFIES: this
+     * EFFECTS: Handles the user's chosen command from the menu.
+     *          Depending on the command, it will reset the timer, stop the timer,
+     *          display statistics, or mark a task as completed.
+     */
     public void options(int command) {
         switch (command) {
             case 1:
