@@ -62,11 +62,14 @@ public class PomodoroSession {
      *          when currentDuration is over, it will move to endWork method to take a break
      */
     private void startTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = new Timer();
+        }
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                currentDuration = currentDuration - 1; //decrease 1s
-
+                currentDuration = currentDuration - 1;
                 if (currentDuration < 0) {
                     timer.cancel();
                     if (isOnBreak) {
