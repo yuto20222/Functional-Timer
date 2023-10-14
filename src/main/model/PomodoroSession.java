@@ -68,12 +68,12 @@ public class PomodoroSession {
             timer.cancel();
             timer = new Timer();
         }
-        assert timer != null;
+        assert timer != null; //I don't know why it is necessary
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 currentDuration = currentDuration - 1;
-                if (currentDuration < 0) {
+                if (currentDuration < 0) { //?
                     timer.cancel();
                     if (isOnBreak) {
                         isOnBreak = false;
@@ -94,7 +94,7 @@ public class PomodoroSession {
      */
     public void endWork() {
         isRunning = false; //stop workSession
-        timer.cancel();
+        timer.cancel(); // do I need?
         stat.addCompletedSession();
         stat.addTotalWorkTime(workDuration);
         if (stat.getCompletedSessions() % 3 == 0) {
@@ -133,10 +133,9 @@ public class PomodoroSession {
 
     public void resetTimer() {
         timer.cancel();
-        currentDuration = workDuration;
         isRunning = false;
         isOnBreak = false;
-        timer = new Timer();
+//        timer = new Timer();
     }
 
     public int getWorkDuration() {
@@ -161,5 +160,12 @@ public class PomodoroSession {
 
     public boolean isOnBreak() {
         return isOnBreak;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: just for the test
+    //          to test the logic that causes the timer to expire
+    public void setCurrentDuration(int duration) {
+        this.currentDuration = duration;
     }
 }

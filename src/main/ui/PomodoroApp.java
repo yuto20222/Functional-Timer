@@ -94,6 +94,14 @@ public class PomodoroApp {
             Task task = new Task(name);
             taskList.add(task);
         }
+        show(num);
+    }
+
+    public void show(int num) {
+        for (int i = 0; i < num; i++) {
+            Task taskShow = taskList.get(i);
+            System.out.println(i + ": " + taskShow.getTaskName());
+        }
     }
 
     /*
@@ -106,10 +114,7 @@ public class PomodoroApp {
         switch (command) {
             case 1:
                 session.resetTimer();
-                System.out.println("when you are ready, press 1");
-                if (input.nextInt() == 1) {
-                    session.startWork();
-                }
+                System.out.println("See you soon");
                 break;
             case 2:
                 session.stop();
@@ -133,13 +138,27 @@ public class PomodoroApp {
                 choose();
                 break;
             case 4:
-                System.out.println("Which task? From the top, what number is it?");
+                empty();
+                System.out.println("Which task? From the top, what number is it(from 0)?");
                 int index = input.nextInt();
                 Task finishedTask = taskList.get(index);
-                finishedTask.isCompleted();
+                finishedTask.markIfCompleted();
+                for (int i = 0; i < taskList.size(); i++) {
+                    if (finishedTask.isCompleted()) {
+                        taskList.remove(finishedTask);
+                    }
+                }
                 System.out.println("Good job");
+                show(taskList.size());
                 choose();
                 break;
+        }
+    }
+
+    public void empty() {
+        if (taskList.isEmpty()) {
+            System.out.println("There is nothing to do anymore");
+            choose();
         }
     }
 }

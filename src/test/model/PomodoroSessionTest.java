@@ -2,6 +2,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 public class PomodoroSessionTest {
     private PomodoroSession testPomodoro;
@@ -33,12 +34,33 @@ public class PomodoroSessionTest {
         assertFalse(testPomodoro.isOnBreak());
     }
 
+    //https://jierong.dev/ja/2020/08/02/unit-testing-code-using-timer.html
+    //I saw this website to write below code.
     @Test
     public void testStartTimerDecreasesCurrentDuration() throws InterruptedException {
         testPomodoro.startWork();
         int initialDuration = testPomodoro.getCurrentDuration();
-        Thread.sleep(2000); // wait for two seconds
+
+        Thread.sleep(2000); // wait for 2 seconds
+
         assertTrue(testPomodoro.getCurrentDuration() < initialDuration);
+
+    }
+
+    @Test
+    public void testTimerExpiresDuringBreak() {
+        testPomodoro.startShortBreak();
+        testPomodoro.setCurrentDuration(-1); // currentDurationを0より小さい値に設定してタイマーの完了をシミュレート
+
+        assertTrue(testPomodoro.isOnBreak());
+    }
+
+    @Test
+    public void testTimerExpiresDuringWork() {
+        testPomodoro.startWork();
+        testPomodoro.setCurrentDuration(-1); // currentDurationを0より小さい値に設定してタイマーの完了をシミュレート
+
+        assertFalse(testPomodoro.isOnBreak());
     }
 
     @Test
