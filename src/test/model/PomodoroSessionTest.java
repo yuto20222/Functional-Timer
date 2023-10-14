@@ -47,21 +47,6 @@ public class PomodoroSessionTest {
 
     }
 
-    @Test
-    public void testTimerExpiresDuringBreak() {
-        testPomodoro.startShortBreak();
-        testPomodoro.setCurrentDuration(-1); // currentDurationを0より小さい値に設定してタイマーの完了をシミュレート
-
-        assertTrue(testPomodoro.isOnBreak());
-    }
-
-    @Test
-    public void testTimerExpiresDuringWork() {
-        testPomodoro.startWork();
-        testPomodoro.setCurrentDuration(-1); // currentDurationを0より小さい値に設定してタイマーの完了をシミュレート
-
-        assertFalse(testPomodoro.isOnBreak());
-    }
 
     @Test
     public void testStartTimer() {

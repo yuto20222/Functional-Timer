@@ -162,10 +162,5 @@ public class PomodoroSession {
         return isOnBreak;
     }
 
-    // MODIFIES: this
-    // EFFECTS: just for the test
-    //          to test the logic that causes the timer to expire
-    public void setCurrentDuration(int duration) {
-        this.currentDuration = duration;
-    }
+
 }
