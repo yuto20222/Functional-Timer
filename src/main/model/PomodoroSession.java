@@ -63,6 +63,7 @@ public class PomodoroSession {
      *          this is the core timer
      *          when currentDuration is over, it will move to endWork method to take a break
      */
+    // https://www.delftstack.com/ja/howto/java/countdown-timer-java/
     private void startTimer() {
         if (timer != null) {
             timer.cancel();
@@ -73,7 +74,7 @@ public class PomodoroSession {
             @Override
             public void run() {
                 currentDuration = currentDuration - 1;
-                if (currentDuration < 0) { //?
+                if (currentDuration < 0) {
                     timer.cancel();
                     if (isOnBreak) {
                         isOnBreak = false;
@@ -94,7 +95,7 @@ public class PomodoroSession {
      */
     public void endWork() {
         isRunning = false; //stop workSession
-        timer.cancel(); // do I need?
+        timer.cancel();
         stat.addCompletedSession();
         stat.addTotalWorkTime(workDuration);
         if (stat.getCompletedSessions() % 3 == 0) {

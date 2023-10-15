@@ -34,7 +34,7 @@ public class PomodoroSessionTest {
         assertFalse(testPomodoro.isOnBreak());
     }
 
-    //https://jierong.dev/ja/2020/08/02/unit-testing-code-using-timer.html
+    //https://www.digitalocean.com/community/tutorials/thread-sleep-java
     //I saw this website to write below code.
     @Test
     public void testStartTimerDecreasesCurrentDuration() throws InterruptedException {
