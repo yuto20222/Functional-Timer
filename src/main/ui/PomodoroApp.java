@@ -34,6 +34,10 @@ public class PomodoroApp {
      */
     private void runApp() {
         firstSetting();
+        start();
+    }
+
+    private void start() {
         session.startWork();
         choose();
     }
@@ -119,7 +123,20 @@ public class PomodoroApp {
             case 2:
                 session.stop();
                 System.out.println("Great Work!!");
-                choose();
+                again();
+        }
+    }
+
+    public void again() {
+        System.out.println("If you want to resume, press 1");
+        System.out.println("If you want to leave, press 2");
+        int num = input.nextInt();
+        switch (num) {
+            case 1:
+                start();
+                break;
+            case 2:
+                System.out.println("See you soon");
                 break;
         }
     }
@@ -158,7 +175,7 @@ public class PomodoroApp {
     public void empty() {
         if (taskList.isEmpty()) {
             System.out.println("There is nothing to do anymore");
-            choose();
+            System.out.println("Nice work");
         }
     }
 }

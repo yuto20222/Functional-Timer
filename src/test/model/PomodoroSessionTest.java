@@ -91,6 +91,7 @@ public class PomodoroSessionTest {
         assertEquals(1, testStat.getCompletedSessions());
     }
 
+    // make sure if stat can have how many times this ends sessions correctly
     @Test
     public void testEndWorkAfterThreeSessions() {
         for (int i = 0; i < 3; i++) {

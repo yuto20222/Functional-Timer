@@ -35,7 +35,7 @@ public class PomodoroSession {
         if (setLongBreakDuration < 0) {
             setLongBreakDuration = 10; //default
         }
-        this.workDuration = setWorkDuration * 60; //from min to s
+        this.workDuration = setWorkDuration * 60; //from min to seconds
         this.shortBreakDuration = setShortBreakDuration * 60;
         this.longBreakDuration = setLongBreakDuration * 60;
         this.stat = stat;
@@ -68,16 +68,17 @@ public class PomodoroSession {
         if (timer != null) {
             timer.cancel();
             timer = new Timer();
-        }
+        }  // test for when timer is null
         assert timer != null; //I don't know why it is necessary
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                currentDuration = currentDuration - 1;
-                if (currentDuration < 0) {
+                currentDuration = currentDuration - 1; //every second
+                if (currentDuration <= 0) {  //test for when timer is running out
                     timer.cancel();
                     if (isOnBreak) {
-                        isOnBreak = false;
+                        isOnBreak = false; // for break
+                        endWork();
                     } else {
                         endWork();
                     }
@@ -85,6 +86,13 @@ public class PomodoroSession {
             }
         }, 0, 1000);
     }
+
+
+
+//    // this methond is just for test
+//    public void substruct() {
+//
+//    }
 
     /*
      * MODIFIES: this, Statistics
@@ -136,6 +144,7 @@ public class PomodoroSession {
         timer.cancel();
         isRunning = false;
         isOnBreak = false;
+
 //        timer = new Timer();
     }
 
