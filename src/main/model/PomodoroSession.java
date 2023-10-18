@@ -172,5 +172,7 @@ public class PomodoroSession {
         return isOnBreak;
     }
 
-
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
 }

@@ -17,8 +17,8 @@
 - Since I am used to use it, it might be easier than other projects.
 
 ## UserStory
-- As a user, I want to be able to add completed study session and breaks to my each of the statics:
-- As a user, I want to be able to view the list of completed study session and breaks in my statics:
+- As a user, I want to be able to add completed study session to the statics:
+- As a user, I want to be able to view the list of completed study session in my statics:
 - As a user, I want to be able to reset a Pomodoro session: // difficult
 - As a user, I want to be able to pause and resume a Pomodoro session:
 - As a user, I want to customize the duration of my Pomodoro session:

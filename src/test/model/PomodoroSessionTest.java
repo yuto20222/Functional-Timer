@@ -47,6 +47,11 @@ public class PomodoroSessionTest {
 
     }
 
+    @Test
+    public void testStartTimerNotNull() {
+        testPomodoro.setTimer(null);
+    }
+
 
     @Test
     public void testStartTimer() {
