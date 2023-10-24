@@ -14,7 +14,6 @@ public class PomodoroApp {
     private PomodoroSession session;
     private Statistics statistics;
     private List<Task> taskList;
-
     private final Scanner input;
 
     /*

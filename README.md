@@ -23,5 +23,5 @@
 - As a user, I want to be able to pause and resume a Pomodoro session:
 - As a user, I want to customize the duration of my Pomodoro session:
 
-- As a user, I want to keep current statistics on file (if I so choose)
-- As a user, I want to reload my saved statistics into the application (if I so choose)
+- As a user, I want to save my current timer condition, statistics, and finished tasks to a file.
+- As a user, I want to reload my saved timer condition, statistics, and finished tasks from a file.
