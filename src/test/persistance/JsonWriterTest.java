@@ -63,8 +63,6 @@ class JsonWriterTest extends JsonTest {
             JsonReader reader = new JsonReader("./data/testWriterGeneralPomodoroSession.json");
             ps = reader.readPomodoroSession();
 
-
-
         } catch (IOException e) {
             fail("Exception should not have been thrown");
         }
