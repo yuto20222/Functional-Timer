@@ -91,14 +91,14 @@ public class JsonReader {
     // MODIFIES: stat
     // EFFECTS: parses CompletedTasks from JSON object and adds them to Statistics
     private void addCompletedTasks(Statistics stat, JSONObject jsonObject) {
-        JSONArray jsonArray = jsonObject.optJSONArray("completedTasks");
+        JSONArray jsonArray = jsonObject.optJSONArray("tasks");  // Change "completedTasks" to "tasks"
         if (jsonArray != null) {
             for (Object json : jsonArray) {
                 JSONObject nextThingy = (JSONObject) json;
                 addCompletedTask(stat, nextThingy);
             }
         } else {
-            System.err.println("Warning: completedTasks key not found in the JSON object.");
+            System.err.println("Warning: tasks key not found in the JSON object.");
         }
     }
 

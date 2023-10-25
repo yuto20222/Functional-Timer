@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JsonWriterTest {
+class JsonWriterTest extends JsonTest {
 
     @Test
     void testWriterInvalidFile() {
@@ -37,9 +37,9 @@ class JsonWriterTest {
 
             JsonReader reader = new JsonReader("./data/testWriterEmptyPomodoroSession.json");
             ps = reader.readPomodoroSession();
-            assertEquals(1500, ps.getWorkDuration());
-            assertEquals(300, ps.getShortBreakDuration());
-            assertEquals(600, ps.getLongBreakDuration());
+
+            // Using checkPomodoroSession method from JsonTest
+            checkPomodoroSession(1500, 300, 600, ps);
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");
@@ -84,14 +84,15 @@ class JsonWriterTest {
 
             JsonReader reader = new JsonReader("./data/testWriterStatistics.json");
             st = reader.readStatistics();
-            assertEquals(0, st.getCompletedSessions());
-            assertEquals(0, st.getTotalWorkTime());
-            // ... and other assertions for Statistics
+
+            // Using checkStatistics method from JsonTest
+            checkStatistics(0, 0, st);
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");
         }
     }
+
     @Test
     void testWriterTaskList() {
         try {
@@ -107,8 +108,10 @@ class JsonWriterTest {
             JsonReader reader = new JsonReader("./data/testWriterTaskList.json");
             List<Task> readTaskList = reader.readTasks();
             assertEquals(2, readTaskList.size());
-            assertEquals("Task 1", readTaskList.get(0).getTaskName());
-            assertEquals("Task 2", readTaskList.get(1).getTaskName());
+
+            // Using checkTask method from JsonTest
+            checkTask("Task 1", false, readTaskList.get(0));
+            checkTask("Task 2", false, readTaskList.get(1));
 
         } catch (IOException e) {
             fail("Exception should not have been thrown");
