@@ -1,8 +1,12 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
+
 // Represents a task with a specific name.
 // Keeps track of the task's completion status.
-public class Task {
+public class Task implements Writable {
     private final String taskName;
     private boolean isCompleted;
 
@@ -34,4 +38,11 @@ public class Task {
         return taskName;
     }
 
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("taskName", taskName);
+        json.put("isCompleted", isCompleted);
+        return json;
+    }
 }

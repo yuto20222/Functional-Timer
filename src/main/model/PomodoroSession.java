@@ -1,11 +1,13 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
 import java.util.Timer;
 import java.util.TimerTask;
 
 // Represents a Pomodoro work session with configurable work and break durations.
 // Allows starting, stopping, and resetting of the timer and keeps track of session statistics.
-public class PomodoroSession {
+public class PomodoroSession implements Writable {
     // delete or rename this class!
     private final int workDuration;
     private final int shortBreakDuration;
@@ -174,5 +176,18 @@ public class PomodoroSession {
 
     public void setTimer(Timer timer) {
         this.timer = timer;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("workDuration", workDuration);
+        json.put("shortBreakDuration", shortBreakDuration);
+        json.put("longBreakDuration", longBreakDuration);
+        json.put("currentDuration", currentDuration);
+        json.put("isRunning", isRunning);
+        json.put("isOnBreak", isOnBreak);
+        json.put("statistics", stat.toJson()); // Assuming Statistics class also implements Writable
+        return json;
     }
 }

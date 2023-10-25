@@ -3,7 +3,11 @@ package ui;
 import model.PomodoroSession;
 import model.Statistics;
 import model.Task;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,6 +19,10 @@ public class PomodoroApp {
     private Statistics statistics;
     private List<Task> taskList;
     private final Scanner input;
+    boolean keepGoing = true;
+    private static final String JSON_STORE = "./data/pomodoro.json"; // JSONの保存先を指定
+    private JsonWriter jsonWriter; // JSONへの書き込みのためのオブジェクト
+    private JsonReader jsonReader; // JSONからの読み込みのためのオブジェクト
 
     /*
      * MODIFIES: this
@@ -22,6 +30,8 @@ public class PomodoroApp {
      */
     public PomodoroApp() {
         input = new Scanner(System.in);
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
         runApp();
     }
 
@@ -34,29 +44,83 @@ public class PomodoroApp {
     private void runApp() {
         firstSetting();
         start();
+
+        while (keepGoing) {
+            displayMenu();
+            int command = input.nextInt();
+            if (0 <= command && command <= 2) {
+                processCommand(command);
+            } else if (4 <= command && command <= 5) {
+                options1(command);
+            } else if (6 <= command && command <= 7) {
+                options2(command);
+            }
+        }
     }
 
     private void start() {
         session.startWork();
-        choose();
     }
+
+
 
     /*
      * MODIFIES: this
      * EFFECTS: Displays a menu to the user and prompts them to choose an option.
      *          The user can reset the timer, stop the timer, view statistics, or finish a task.
      */
-    public void choose() {
-        System.out.println("If you want to reset the timer, press 1");
-        System.out.println("If you want to stop the timer, press 2");
-        System.out.println("If you want to see the statistic of your work, press 3");
-        System.out.println("If you want to finish one task, press 4 to erase it");
-        int command = input.nextInt();
-        if (command == 1 || command == 2) {
-            options1(command);
-        } else {
-            options2(command);
+    public void displayMenu() {
+        System.out.println("\nSelect from:");
+        System.out.println("\t0 -> add task");
+        System.out.println("\t1 -> save pomodoro session to file");
+        System.out.println("\t2 -> load pomodoro session from file");
+//        System.out.println("\t3 -> quit");
+        System.out.println("\tIf you want to reset the timer, press 4");
+        System.out.println("\tIf you want to stop the timer, press 5");
+        System.out.println("\tIf you want to see the statistic of your work, press 6");
+        System.out.println("\tIf you want to finish one task, press 7 to erase it");
+    }
+
+    private void processCommand(int command) {
+        if (command == 0) {
+            addTask();
+        } else if (command == 1) {
+            savePomodoroSession();
+        } else if (command == 2) {
+            loadPomodoroSession();
         }
+    }
+
+    private void savePomodoroSession() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(session);
+            jsonWriter.write(statistics);
+            jsonWriter.write(taskList);
+            jsonWriter.close();
+            System.out.println("Saved everything to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
+
+    private void loadPomodoroSession() {
+        try {
+            session = jsonReader.readPomodoroSession();
+            statistics = jsonReader.readStatistics();
+            taskList = jsonReader.readTasks();
+            System.out.println("Loaded pomodoro session from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        }
+    }
+
+    private void addTask() {
+        System.out.println("Please enter the name of the task: ");
+        String taskName = input.next();
+        Task newTask = new Task(taskName);
+        taskList.add(newTask);
+        show(taskList.size());
     }
 
     /*
@@ -77,7 +141,7 @@ public class PomodoroApp {
         input.nextLine();
         statistics = new Statistics();
         collectTasks();
-        session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);
+        session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);   //all information
     }
 
     /*
@@ -115,14 +179,16 @@ public class PomodoroApp {
      */
     public void options1(int command) {
         switch (command) {
-            case 1:
+            case 4:
+                System.out.println("If you want to use this again, please resume this again");
                 session.resetTimer();
-                System.out.println("See you soon");
+                keepGoing = false;
                 break;
-            case 2:
+            case 5:
                 session.stop();
                 System.out.println("Great Work!!");
                 again();
+                break;
         }
     }
 
@@ -132,10 +198,13 @@ public class PomodoroApp {
         int num = input.nextInt();
         switch (num) {
             case 1:
+                keepGoing = true;
                 start();
+                show(taskList.size());
                 break;
             case 2:
                 System.out.println("See you soon");
+                keepGoing = false;
                 break;
         }
     }
@@ -148,33 +217,31 @@ public class PomodoroApp {
      */
     public void options2(int command) {
         switch (command) {
-            case 3:
+            case 6:
                 System.out.println("the number of finished session: " + statistics.getCompletedSessions());
                 System.out.println("the length of working time is : " + statistics.getTotalWorkTime() + "seconds");
-                choose();
                 break;
-            case 4:
-                empty();
-                System.out.println("Which task? From the top, what number is it(from 0)?");
-                int index = input.nextInt();
-                Task finishedTask = taskList.get(index);
-                finishedTask.markIfCompleted();
-                for (int i = 0; i < taskList.size(); i++) {
-                    if (finishedTask.isCompleted()) {
-                        taskList.remove(finishedTask);
-                    }
-                }
-                System.out.println("Good job");
-                show(taskList.size());
-                choose();
+            case 7:
+                case7();
                 break;
         }
     }
 
-    public void empty() {
+    public void case7() {
         if (taskList.isEmpty()) {
             System.out.println("There is nothing to do anymore");
             System.out.println("Nice work");
+        } else {
+            System.out.println("Which task? From the top, what number is it(from 0)?");
+            int index = input.nextInt();
+            Task finishedTask = taskList.get(index);  //!!
+            finishedTask.markIfCompleted();
+
+            int size = taskList.size();
+            statistics.addCompletedTaskList(finishedTask);
+            taskList.remove(finishedTask);
+            System.out.println("Good job");
+            show(taskList.size());
         }
     }
 }

@@ -1,10 +1,18 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
+import java.util.ArrayList;
+import java.util.List;
+
 // Represents the statistics related to work sessions.
 // Keeps track of the number of completed sessions and the total work time.
-public class Statistics {
+public class Statistics implements Writable {
     private int completedSessions;
     private int totalWorkTime;
+    private List<Task> completedTaskList;
 
     /*
      * MODIFIES: this
@@ -13,6 +21,7 @@ public class Statistics {
     public Statistics() {
         this.completedSessions = 0;
         this.totalWorkTime = 0;
+        completedTaskList = new ArrayList<>();
     }
 
     /*
@@ -32,6 +41,9 @@ public class Statistics {
         this.totalWorkTime += time;
     }
 
+    public void addCompletedTaskList(Task task) {
+        this.completedTaskList.add(task);
+    }
 
     public int getCompletedSessions() {
         return completedSessions;
@@ -40,4 +52,18 @@ public class Statistics {
     public int getTotalWorkTime() {
         return totalWorkTime;
     }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("completedSessions", completedSessions);
+        json.put("totalWorkTime", totalWorkTime);
+        JSONArray tasksArray = new JSONArray();
+        for (Task task : completedTaskList) {
+            tasksArray.put(task.toJson());
+        }
+        json.put("tasks", tasksArray);
+        return json;
+    }
+
 }
