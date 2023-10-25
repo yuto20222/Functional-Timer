@@ -1,23 +1,19 @@
 {
-    "longBreakDuration": 60,
-    "isRunning": true,
-    "isOnBreak": false,
-    "currentDuration": 48,
-    "shortBreakDuration": 60,
-    "workDuration": 60,
-    "statistics": {
-        "totalWorkTime": 0,
-        "completedSessions": 0,
-        "tasks": [{
-            "taskName": "gajga",
-            "isCompleted": true
-        }]
-    }
-}{
-    "totalWorkTime": 0,
-    "completedSessions": 0,
+    "pomodoroSession": {
+        "longBreakDuration": 60,
+        "isRunning": true,
+        "isOnBreak": false,
+        "currentDuration": 56,
+        "shortBreakDuration": 60,
+        "workDuration": 60,
+        "statistics": {
+            "totalWorkTime": 0,
+            "completedSessions": 0,
+            "tasks": []
+        }
+    },
     "tasks": [{
         "taskName": "gajga",
-        "isCompleted": true
+        "isCompleted": false
     }]
 }

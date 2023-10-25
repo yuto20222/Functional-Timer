@@ -31,18 +31,19 @@ public class JsonReader {
         return parsePomodoroSession(jsonObject);
     }
 
-    // EFFECTS: reads data from file and returns a Statistics object;
-    // throws IOException if an error occurs reading data from file
-    public Statistics readStatistics() throws IOException {
-        String jsonData = readFile(source);
-        JSONObject jsonObject = new JSONObject(jsonData);
-        return parseStatistics(jsonObject);
-    }
+//    // EFFECTS: reads data from file and returns a Statistics object;
+//    // throws IOException if an error occurs reading data from file
+//    public Statistics readStatistics() throws IOException {
+//        String jsonData = readFile(source);
+//        JSONObject jsonObject = new JSONObject(jsonData);
+//        return parseStatistics(jsonObject);
+//    }
 
     // EFFECTS: reads source file as string and returns it as a List<Task>
     public List<Task> readTasks() throws IOException {
         String jsonData = readFile(source);
-        JSONArray jsonArray = new JSONArray(jsonData);
+        JSONObject fullJson = new JSONObject(jsonData);
+        JSONArray jsonArray = fullJson.getJSONArray("tasks");
         List<Task> taskList = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -71,13 +72,11 @@ public class JsonReader {
 
     // EFFECTS: parses workroom from JSON object and returns it
     private PomodoroSession parsePomodoroSession(JSONObject jsonObject) {
-        int setWorkDuration = jsonObject.optInt("setWorkDuration", 25);  // default is 25 if not present
-        int setShortBreakDuration = jsonObject.optInt("setShortBreakDuration", 5);  // default is 5 if not present
-        int setLongBreakDuration = jsonObject.optInt("setLongBreakDuration", 10);  // default is 10 if not present
-
-        JSONObject statJson = jsonObject.optJSONObject("statistics");
-        Statistics stat = parseStatistics(statJson);
-
+        JSONObject sessionData = jsonObject.getJSONObject("pomodoroSession");
+        int setWorkDuration = sessionData.getInt("workDuration");
+        int setShortBreakDuration = sessionData.getInt("shortBreakDuration");
+        int setLongBreakDuration = sessionData.getInt("longBreakDuration");
+        Statistics stat = parseStatistics(sessionData);
         return new PomodoroSession(setWorkDuration, setShortBreakDuration, setLongBreakDuration, stat);
     }
 
@@ -109,7 +108,6 @@ public class JsonReader {
         Task task = new Task(name);
         stat.addCompletedTaskList(task);
     }
-
 
 }
 

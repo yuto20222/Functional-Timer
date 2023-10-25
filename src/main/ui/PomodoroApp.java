@@ -20,9 +20,9 @@ public class PomodoroApp {
     private List<Task> taskList;
     private final Scanner input;
     boolean keepGoing = true;
-    private static final String JSON_STORE = "./data/pomodoro.json"; // JSONの保存先を指定
-    private JsonWriter jsonWriter; // JSONへの書き込みのためのオブジェクト
-    private JsonReader jsonReader; // JSONからの読み込みのためのオブジェクト
+    private static final String JSON_STORE = "./data/pomodoro.json";
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
 
     /*
      * MODIFIES: this
@@ -94,9 +94,7 @@ public class PomodoroApp {
     private void savePomodoroSession() {
         try {
             jsonWriter.open();
-            jsonWriter.write(session);
-            jsonWriter.write(statistics);
-            jsonWriter.write(taskList);
+            jsonWriter.write(session, taskList);
             jsonWriter.close();
             System.out.println("Saved everything to " + JSON_STORE);
         } catch (FileNotFoundException e) {
@@ -107,7 +105,7 @@ public class PomodoroApp {
     private void loadPomodoroSession() {
         try {
             session = jsonReader.readPomodoroSession();
-            statistics = jsonReader.readStatistics();
+//            statistics = jsonReader.readStatistics();
             taskList = jsonReader.readTasks();
             System.out.println("Loaded pomodoro session from " + JSON_STORE);
         } catch (IOException e) {

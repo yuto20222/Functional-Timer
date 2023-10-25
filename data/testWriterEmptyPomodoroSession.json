@@ -1,13 +1,16 @@
 {
-    "longBreakDuration": 600,
-    "isRunning": false,
-    "isOnBreak": false,
-    "currentDuration": 1500,
-    "shortBreakDuration": 300,
-    "workDuration": 1500,
-    "statistics": {
-        "totalWorkTime": 0,
-        "completedSessions": 0,
-        "tasks": []
-    }
+    "pomodoroSession": {
+        "longBreakDuration": 600,
+        "isRunning": false,
+        "isOnBreak": false,
+        "currentDuration": 1500,
+        "shortBreakDuration": 300,
+        "workDuration": 1500,
+        "statistics": {
+            "totalWorkTime": 0,
+            "completedSessions": 0,
+            "tasks": []
+        }
+    },
+    "tasks": []
 }

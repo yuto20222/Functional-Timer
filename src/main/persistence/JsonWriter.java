@@ -1,7 +1,6 @@
 package persistence;
 
 import model.PomodoroSession;
-import model.Statistics;
 import model.Task;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,27 +27,19 @@ public class JsonWriter {
     }
 
     // MODIFIES: this
-    // EFFECTS: writes JSON representation of workroom to file
-    public void write(PomodoroSession ps) {
-        JSONObject json = ps.toJson();
-        saveToFile(json.toString(TAB));
-    }
+    // EFFECTS: writes JSON representation of all data to file
+    public void write(PomodoroSession ps, List<Task> taskList) {
+        JSONObject json = new JSONObject();
+        json.put("pomodoroSession", ps.toJson());
+//        json.put("statistics", st.toJson());
 
-    // MODIFIES: this
-    // EFFECTS: writes JSON representation of workroom to file
-    public void write(Statistics st) {
-        JSONObject json = st.toJson();
-        saveToFile(json.toString(TAB));
-    }
-
-    // MODIFIES: this
-    // EFFECTS: writes JSON representation of workroom to file
-    public void write(List<Task> taskList) throws FileNotFoundException {
-        JSONArray jsonArray = new JSONArray();
+        JSONArray taskArray = new JSONArray();
         for (Task task : taskList) {
-            jsonArray.put(task.toJson());
+            taskArray.put(task.toJson());
         }
-        saveToFile(jsonArray.toString());
+        json.put("tasks", taskArray);
+
+        saveToFile(json.toString(TAB));
     }
 
     // MODIFIES: this
