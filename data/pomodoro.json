@@ -3,17 +3,17 @@
         "longBreakDuration": 60,
         "isRunning": true,
         "isOnBreak": false,
-        "currentDuration": 44,
+        "currentDuration": 57,
         "shortBreakDuration": 60,
         "workDuration": 60,
         "statistics": {
             "totalWorkTime": 0,
             "completedSessions": 0,
-            "tasks": [{
-                "taskName": "'agjo",
-                "isCompleted": true
-            }]
+            "tasks": []
         }
     },
-    "tasks": []
+    "tasks": [{
+        "taskName": "galjgoai",
+        "isCompleted": false
+    }]
 }

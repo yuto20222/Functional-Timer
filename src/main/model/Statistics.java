@@ -63,6 +63,11 @@ public class Statistics implements Writable {
         return totalWorkTime;
     }
 
+    // EFFECTS: Return the size of completedTaskList
+    public int getCompletedTaskSize() {
+        return completedTaskList.size();
+    }
+
     /*
      * EFFECTS: Returns this statistics as a JSON object.
      */

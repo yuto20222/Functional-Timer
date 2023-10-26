@@ -4,7 +4,9 @@ package persistance;
 import model.PomodoroSession;
 import model.Statistics;
 import model.Task;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import persistence.JsonReader;
 import persistence.JsonWriter;
@@ -37,28 +39,6 @@ class JsonReaderTest extends JsonTest {
             fail("IOException should not have been thrown");
         }
     }
-
-//    @Test
-//    void testReadStatistics() {
-//        try {
-//            Statistics st = new Statistics();
-//            st.addCompletedSession();
-//            st.addTotalWorkTime(1500);  // for example, 25 minutes in seconds
-//
-//            JsonWriter writer = new JsonWriter("./data/testReadStatistics.json");
-//            writer.open();
-//            writer.write(st);
-//            writer.close();
-//
-//            JsonReader reader = new JsonReader("./data/testReadStatistics.json");
-//            st = reader.readStatistics();
-//            // Assuming there are no completed sessions and total work time is 0 in the test file
-//            checkStatistics(0, 0, st);
-//        } catch (IOException e) {
-//            fail("IOException should not have been thrown");
-//        }
-//    }
-
 
     @Test
     void testReadTasks() {
@@ -94,4 +74,29 @@ class JsonReaderTest extends JsonTest {
             // pass
         }
     }
+
+    @Test
+    void testAddCompletedTasks() {
+        JsonReader jsonReader = new JsonReader("dummyPath");
+        JSONObject testJson = new JSONObject();
+        JSONArray tasksArray = new JSONArray();
+
+        // Add two tasks
+        JSONObject task1 = new JSONObject();
+        task1.put("name", "Test Task 1");
+        tasksArray.put(task1);
+
+        JSONObject task2 = new JSONObject();
+        task2.put("name", "Test Task 2");
+        tasksArray.put(task2);
+
+        testJson.put("tasks", tasksArray);
+
+        Statistics stats = new Statistics();
+        jsonReader.addCompletedTasks(stats, testJson);
+
+        // Assuming Statistics class has a method to get the size of completed tasks.
+        assertEquals(2, stats.getCompletedTaskSize());
+    }
+
 }

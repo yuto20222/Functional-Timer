@@ -89,7 +89,7 @@ public class JsonReader {
 
     // MODIFIES: stat
     // EFFECTS: parses CompletedTasks from JSON object and adds them to Statistics
-    private void addCompletedTasks(Statistics stat, JSONObject jsonObject) {
+    public void addCompletedTasks(Statistics stat, JSONObject jsonObject) {
         JSONArray jsonArray = jsonObject.optJSONArray("tasks");  // Change "completedTasks" to "tasks"
         if (jsonArray != null) {
             for (Object json : jsonArray) {
