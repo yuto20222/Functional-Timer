@@ -96,9 +96,10 @@ public class JsonReader {
                 JSONObject nextThingy = (JSONObject) json;
                 addCompletedTask(stat, nextThingy);
             }
-        } else {
-            System.err.println("Warning: tasks key not found in the JSON object.");
         }
+//        else {
+//            System.err.println("Warning: tasks key not found in the JSON object.");
+//        }
     }
 
     // MODIFIES: stat
