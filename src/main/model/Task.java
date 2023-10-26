@@ -34,10 +34,16 @@ public class Task implements Writable {
         return isCompleted;
     }
 
+    /*
+     * EFFECTS: Returns the task's name.
+     */
     public String getTaskName() {
         return taskName;
     }
 
+    /*
+     * EFFECTS: Returns this task as a JSON object.
+     */
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

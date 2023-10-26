@@ -89,13 +89,6 @@ public class PomodoroSession implements Writable {
         }, 0, 1000);
     }
 
-
-
-//    // this methond is just for test
-//    public void substruct() {
-//
-//    }
-
     /*
      * MODIFIES: this, Statistics
      * EFFECTS: it can start breakTime
@@ -137,11 +130,19 @@ public class PomodoroSession implements Writable {
         startTimer();
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Stops the current timer.
+     */
     public void stop() {
         isRunning = false;
         timer.cancel();
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Resets and stops the timer.
+     */
     public void resetTimer() {
         timer.cancel();
         isRunning = false;
@@ -150,34 +151,59 @@ public class PomodoroSession implements Writable {
 //        timer = new Timer();
     }
 
+    /*
+     * EFFECTS: Returns the work duration of the session.
+     */
     public int getWorkDuration() {
         return workDuration;
     }
 
+    /*
+     * EFFECTS: Returns the short break duration of the session.
+     */
     public int getShortBreakDuration() {
         return shortBreakDuration;
     }
 
+    /*
+     * EFFECTS: Returns the long break duration of the session.
+     */
     public int getLongBreakDuration() {
         return longBreakDuration;
     }
 
+    /*
+     * EFFECTS: Returns the current duration left on the timer.
+     */
     public int getCurrentDuration() {
         return currentDuration;
     }
 
+    /*
+     * EFFECTS: Returns true if the session is currently running, false otherwise.
+     */
     public boolean isRunning() {
         return isRunning;
     }
 
+    /*
+     * EFFECTS: Returns true if the session is currently on a break, false otherwise.
+     */
     public boolean isOnBreak() {
         return isOnBreak;
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Sets the timer for the session.
+     */
     public void setTimer(Timer timer) {
         this.timer = timer;
     }
 
+    /*
+     * EFFECTS: Returns this Pomodoro session as a JSON object.
+     */
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

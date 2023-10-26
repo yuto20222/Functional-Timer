@@ -41,18 +41,31 @@ public class Statistics implements Writable {
         this.totalWorkTime += time;
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Adds the given task to the list of completed tasks.
+     */
     public void addCompletedTaskList(Task task) {
         this.completedTaskList.add(task);
     }
 
+    /*
+     * EFFECTS: Returns the number of completed sessions.
+     */
     public int getCompletedSessions() {
         return completedSessions;
     }
 
+    /*
+     * EFFECTS: Returns the total work time.
+     */
     public int getTotalWorkTime() {
         return totalWorkTime;
     }
 
+    /*
+     * EFFECTS: Returns this statistics as a JSON object.
+     */
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

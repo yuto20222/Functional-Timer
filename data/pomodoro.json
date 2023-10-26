@@ -1,19 +1,16 @@
 {
     "pomodoroSession": {
-        "longBreakDuration": 60,
-        "isRunning": true,
+        "longBreakDuration": 216000,
+        "isRunning": false,
         "isOnBreak": false,
-        "currentDuration": 56,
-        "shortBreakDuration": 60,
-        "workDuration": 60,
+        "currentDuration": 216000,
+        "shortBreakDuration": 216000,
+        "workDuration": 216000,
         "statistics": {
             "totalWorkTime": 0,
             "completedSessions": 0,
             "tasks": []
         }
     },
-    "tasks": [{
-        "taskName": "gajga",
-        "isCompleted": false
-    }]
+    "tasks": []
 }
