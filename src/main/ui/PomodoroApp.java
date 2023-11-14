@@ -1,5 +1,9 @@
 package ui;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import model.PomodoroSession;
 import model.Statistics;
 import model.Task;
@@ -15,6 +19,14 @@ import java.util.Scanner;
 // Represents the user interface for the Pomodoro application.
 // Allows users to set up work sessions, take breaks, and manage tasks.
 public class PomodoroApp {
+    private JFrame frame;
+    private JTextField taskField;
+    private JButton addTaskButton;
+    private JButton saveButton;
+    private JButton loadButton;
+    private JTextArea taskListArea;
+    private JLabel timerLabel;
+
     private PomodoroSession session;
     private Statistics statistics;
     private List<Task> taskList;
@@ -29,11 +41,48 @@ public class PomodoroApp {
      * EFFECTS: Initializes the input scanner and runs the application.
      */
     public PomodoroApp() {
+        initializeUI();
         input = new Scanner(System.in);
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         runApp();
     }
+
+    private void initializeUI() {
+        frame = new JFrame("Pomodoro App");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500, 400);
+
+        frame.setLayout(new FlowLayout()); // レイアウトの設定
+
+        taskField = new JTextField(20); // タスク入力用テキストフィールド
+        frame.add(taskField);
+
+        addTaskButton = new JButton("Add Task"); // タスク追加ボタン
+        frame.add(addTaskButton);
+        addTaskButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addTask();
+            }
+        });
+
+        taskListArea = new JTextArea(10, 30); // タスクリストエリア
+        taskListArea.setEditable(false);
+        frame.add(new JScrollPane(taskListArea));
+
+        saveButton = new JButton("Save Session"); // セーブボタン
+        frame.add(saveButton);
+
+        loadButton = new JButton("Load Session"); // ロードボタン
+        frame.add(loadButton);
+
+        timerLabel = new JLabel("00:00"); //　タイマー
+        frame.add(timerLabel);
+
+        frame.setVisible(true); // GUIを表示
+    }
+
 
 
     /*
@@ -76,7 +125,6 @@ public class PomodoroApp {
         System.out.println("\t0 -> add task");
         System.out.println("\t1 -> save pomodoro session to file");
         System.out.println("\t2 -> load pomodoro session from file");
-//        System.out.println("\t3 -> quit");
         System.out.println("\tIf you want to reset the timer, press 3");
         System.out.println("\tIf you want to stop the timer, press 4");
         System.out.println("\tIf you want to see the statistic of your work, press 5");
@@ -120,7 +168,6 @@ public class PomodoroApp {
         try {
             session = jsonReader.readPomodoroSession();
             statistics = session.getStatistics(); // ここで最新のStatisticsを設定
-            // その他のデータ読み込み処理
             taskList = jsonReader.readTasks();
 
             // セッションの状態を再開
@@ -139,11 +186,16 @@ public class PomodoroApp {
      * EFFECTS: Allows the user to add a new task.
      */
     private void addTask() {
-        System.out.println("Please enter the name of the task: ");
-        String taskName = input.next();
+//        System.out.println("Please enter the name of the task: ");
+//        String taskName = input.next();
+//        Task newTask = new Task(taskName);
+//        taskList.add(newTask);
+//        show(taskList.size());
+        String taskName = taskField.getText();
         Task newTask = new Task(taskName);
         taskList.add(newTask);
-        show(taskList.size());
+        taskListArea.append(taskName + "\n");
+        taskField.setText("");
     }
 
     /*
