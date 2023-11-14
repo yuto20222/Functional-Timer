@@ -27,7 +27,7 @@ public class JsonWriter {
     }
 
     // MODIFIES: this
-    // EFFECTS: writes JSON representation of all data to file
+    // EFFECTS: writes JSON representation of all data to file.
     public void write(PomodoroSession ps, List<Task> taskList) {
         JSONObject json = new JSONObject();
         json.put("pomodoroSession", ps.toJson());
