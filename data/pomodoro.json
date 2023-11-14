@@ -1,19 +1,25 @@
 {
     "pomodoroSession": {
-        "longBreakDuration": 60,
+        "longBreakDuration": 1,
         "isRunning": true,
         "isOnBreak": false,
-        "currentDuration": 57,
-        "shortBreakDuration": 60,
-        "workDuration": 60,
+        "currentDuration": 1,
+        "shortBreakDuration": 1,
+        "workDuration": 1,
         "statistics": {
             "totalWorkTime": 0,
             "completedSessions": 0,
-            "tasks": []
+            "tasks": [
+                {
+                    "taskName": "ga;jga",
+                    "isCompleted": true
+                },
+                {
+                    "taskName": "kkk",
+                    "isCompleted": true
+                }
+            ]
         }
     },
-    "tasks": [{
-        "taskName": "galjgoai",
-        "isCompleted": false
-    }]
+    "tasks": []
 }

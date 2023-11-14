@@ -83,5 +83,4 @@ public class Statistics implements Writable {
         json.put("tasks", tasksArray);
         return json;
     }
-
 }

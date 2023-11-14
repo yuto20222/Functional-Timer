@@ -31,7 +31,7 @@ public class JsonWriter {
     public void write(PomodoroSession ps, List<Task> taskList) {
         JSONObject json = new JSONObject();
         json.put("pomodoroSession", ps.toJson());
-//        json.put("statistics", st.toJson());
+//        json.put("statistics", ps.getStatistics().toJson());
 
         JSONArray taskArray = new JSONArray();
         for (Task task : taskList) {

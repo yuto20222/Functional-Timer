@@ -66,7 +66,7 @@ public class PomodoroSession implements Writable {
      *          when currentDuration is over, it will move to endWork method to take a break
      */
     // https://www.delftstack.com/ja/howto/java/countdown-timer-java/
-    private void startTimer() {
+    public void startTimer() {
         if (timer != null) {
             timer.cancel();
             timer = new Timer();
@@ -193,6 +193,10 @@ public class PomodoroSession implements Writable {
         return isOnBreak;
     }
 
+    public Statistics getStatistics() {
+        return this.stat;
+    }
+
     /*
      * MODIFIES: this
      * EFFECTS: Sets the timer for the session.
@@ -201,19 +205,37 @@ public class PomodoroSession implements Writable {
         this.timer = timer;
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets the current duration
+    public void setCurrentDuration(int currentDuration) {
+        this.currentDuration = currentDuration;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: sets the running state
+    public void setRunning(boolean isRunning) {
+        this.isRunning = isRunning;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: sets the on break state
+    public void setOnBreak(boolean isOnBreak) {
+        this.isOnBreak = isOnBreak;
+    }
+
     /*
      * EFFECTS: Returns this Pomodoro session as a JSON object.
      */
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        json.put("workDuration", workDuration);
-        json.put("shortBreakDuration", shortBreakDuration);
-        json.put("longBreakDuration", longBreakDuration);
-        json.put("currentDuration", currentDuration);
-        json.put("isRunning", isRunning);
-        json.put("isOnBreak", isOnBreak);
-        json.put("statistics", stat.toJson()); // Assuming Statistics class also implements Writable
+        json.put("workDuration", this.workDuration / 60);
+        json.put("shortBreakDuration", this.shortBreakDuration / 60);
+        json.put("longBreakDuration", this.longBreakDuration / 60);
+        json.put("currentDuration", this.currentDuration);
+        json.put("isRunning", this.isRunning);
+        json.put("isOnBreak", this.isOnBreak);
+        json.put("statistics", this.stat.toJson()); // Assuming Statistics class also implements Writable
         return json;
     }
 }

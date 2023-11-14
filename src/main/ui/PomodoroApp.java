@@ -119,9 +119,16 @@ public class PomodoroApp {
     private void loadPomodoroSession() {
         try {
             session = jsonReader.readPomodoroSession();
-//            statistics = jsonReader.readStatistics();
+            statistics = session.getStatistics(); // ここで最新のStatisticsを設定
+            // その他のデータ読み込み処理
             taskList = jsonReader.readTasks();
-            System.out.println("Loaded pomodoro session from " + JSON_STORE);
+
+            // セッションの状態を再開
+            if (session.isRunning()) {
+                // もしセッションが実行中であれば、タイマーを再開する
+                session.startTimer();
+            }
+
         } catch (IOException e) {
             System.out.println("Unable to read from file: " + JSON_STORE);
         }
