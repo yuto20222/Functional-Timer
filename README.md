@@ -21,7 +21,7 @@
 - As a user, I want to be able to view the list of completed study session in my statics:
 - As a user, I want to be able to reset a Pomodoro session: // difficult
 - As a user, I want to be able to pause and resume a Pomodoro session:
-- As a user, I want to customize the duration of my Pomodoro session:
+- As a user, I want to add a new task to my Pomodoro session:
 
 - As a user, I want to save my current timer condition, statistics, and finished tasks to a file.
 - As a user, I want to reload my saved timer condition, statistics, and finished tasks from a file.

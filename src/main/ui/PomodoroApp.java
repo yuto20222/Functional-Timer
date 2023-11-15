@@ -26,7 +26,12 @@ public class PomodoroApp {
     private JButton loadButton;
     private JTextArea taskListArea;
     private JLabel timerLabel;
-
+    private DefaultListModel<String> taskListModel;
+    private JList<String> taskListView; //for tasks
+    private JButton markCompletedButton; //for tasks
+//    private JTextField workField;
+//    private JTextField shortBreakField;
+//    private JTextField longBreakField;
     private PomodoroSession session;
     private Statistics statistics;
     private List<Task> taskList;
@@ -52,35 +57,123 @@ public class PomodoroApp {
         frame = new JFrame("Pomodoro App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 400);
-
         frame.setLayout(new FlowLayout()); // レイアウトの設定
 
-        taskField = new JTextField(20); // タスク入力用テキストフィールド
+        // タスク入力用テキストフィールド
+        taskField = new JTextField(20);
         frame.add(taskField);
 
-        addTaskButton = new JButton("Add Task"); // タスク追加ボタン
-        frame.add(addTaskButton);
+        // タスク追加ボタン
+        addTaskButton = new JButton("Add Task");
         addTaskButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addTask();
             }
         });
+        frame.add(addTaskButton);
 
-        taskListArea = new JTextArea(10, 30); // タスクリストエリア
-        taskListArea.setEditable(false);
-        frame.add(new JScrollPane(taskListArea));
+        // タスクリストモデルとビュー
+        taskListModel = new DefaultListModel<>();
+        taskListView = new JList<>(taskListModel);
+        taskListView.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane listScrollPane = new JScrollPane(taskListView);
+        listScrollPane.setPreferredSize(new Dimension(250, 150));
+        frame.add(listScrollPane);
 
-        saveButton = new JButton("Save Session"); // セーブボタン
+        // 完了マークボタン
+        markCompletedButton = new JButton("Mark as Completed");
+        markCompletedButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                markTaskAsCompleted();
+            }
+        });
+        frame.add(markCompletedButton);
+
+        //statボタン
+        JButton statsButton = new JButton("View Statistics");
+        statsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showStatistics();
+            }
+        });
+        frame.add(statsButton);
+
+        // セーブボタン
+        saveButton = new JButton("Save Session");
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                savePomodoroSession();
+            }
+        });
         frame.add(saveButton);
 
-        loadButton = new JButton("Load Session"); // ロードボタン
+        // ロードボタン
+        loadButton = new JButton("Load Session");
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadPomodoroSession();
+            }
+        });
         frame.add(loadButton);
 
-        timerLabel = new JLabel("00:00"); //　タイマー
+        // タイマーラベル
+        timerLabel = new JLabel("00:00");
         frame.add(timerLabel);
 
+//        workField = new JTextField(5);
+//        shortBreakField = new JTextField(5);
+//        longBreakField = new JTextField(5);
+//
+//        // Add the components to the frame with labels
+//        frame.add(new JLabel("Work Duration (minutes):"));
+//        frame.add(workField);
+//
+//        frame.add(new JLabel("Short Break Duration (minutes):"));
+//        frame.add(shortBreakField);
+//
+//        frame.add(new JLabel("Long Break Duration (minutes):"));
+//        frame.add(longBreakField);
+
+        JButton resetTimerButton = new JButton("Reset Timer");
+        resetTimerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // タイマーをリセットする処理
+                session.resetTimer();
+            }
+        });
+        frame.add(resetTimerButton);
+
+        JButton stopTimerButton = new JButton("Stop Timer");
+        stopTimerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // タイマーを停止する処理
+                session.stop();
+            }
+        });
+        frame.add(stopTimerButton);
+
         frame.setVisible(true); // GUIを表示
+    }
+
+    private void markTaskAsCompleted() {
+        int selectedIndex = taskListView.getSelectedIndex();
+        if (selectedIndex != -1) {
+            String taskName = taskListModel.get(selectedIndex);
+            // タスク名から "(uncompleted)" を削除し、"(completed)" を追加
+            taskName = taskName.replace(" (uncompleted)", "") + " (completed)";
+            taskListModel.set(selectedIndex, taskName);
+
+            // 必要に応じて、内部の taskList でのタスク状態も更新
+            Task selectedTask = taskList.get(selectedIndex);
+            selectedTask.markIfCompleted();
+        }
     }
 
 
@@ -192,10 +285,10 @@ public class PomodoroApp {
 //        taskList.add(newTask);
 //        show(taskList.size());
         String taskName = taskField.getText();
-        Task newTask = new Task(taskName);
-        taskList.add(newTask);
-        taskListArea.append(taskName + "\n");
-        taskField.setText("");
+        if (!taskName.trim().isEmpty()) {
+            taskListModel.addElement(taskName + " (uncompleted)"); // リストモデルにタスクを追加
+            taskField.setText(""); // テキストフィールドをクリア
+        }
     }
 
     /*
@@ -205,18 +298,82 @@ public class PomodoroApp {
      *          Asks the user for work duration, short break duration, long break duration, and tasks.
      */
     public void firstSetting() {
-        System.out.println("How long do you want to work in one session: ");
-        int workDuration = input.nextInt();
-        input.nextLine();
-        System.out.println("How long do you need for a short break: ");
-        int shortBreak = input.nextInt();
-        input.nextLine();
-        System.out.println("How long do you need for a long break: ");
-        int longBreak = input.nextInt();
-        input.nextLine();
-        statistics = new Statistics();
-        collectTasks();
-        session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);   //all information
+//        System.out.println("How long do you want to work in one session: ");
+//        int workDuration = input.nextInt();
+//        input.nextLine();
+//        System.out.println("How long do you need for a short break: ");
+//        int shortBreak = input.nextInt();
+//        input.nextLine();
+//        System.out.println("How long do you need for a long break: ");
+//        int longBreak = input.nextInt();
+//        input.nextLine();
+//        statistics = new Statistics();
+//        collectTasks();
+//        session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);   //all information
+        showSettingsAndTaskDialog();
+    }
+
+    private void showSettingsAndTaskDialog() {
+        JDialog settingsDialog = new JDialog(frame, "Settings and Tasks", true);
+        settingsDialog.setLayout(new BoxLayout(settingsDialog.getContentPane(), BoxLayout.Y_AXIS));
+        settingsDialog.setSize(400, 300);
+
+        // 設定のためのテキストフィールド
+        JTextField workField = new JTextField(5);
+        settingsDialog.add(new JLabel("Work Duration (minutes):"));
+        settingsDialog.add(workField);
+
+        JTextField shortBreakField = new JTextField(5);
+        settingsDialog.add(new JLabel("Short Break Duration (minutes):"));
+        settingsDialog.add(shortBreakField);
+
+        JTextField longBreakField = new JTextField(5);
+        settingsDialog.add(new JLabel("Long Break Duration (minutes):"));
+        settingsDialog.add(longBreakField);
+
+        // タスクのためのテキストフィールドとボタン
+        JTextField taskNameField = new JTextField(20);
+        settingsDialog.add(new JLabel("Task Name:"));
+        settingsDialog.add(taskNameField);
+        JButton addTaskButton = new JButton("Add Task");
+        settingsDialog.add(addTaskButton);
+
+        // 既存の taskListModel を使用
+        JList<String> taskListView = new JList<>(taskListModel);
+        settingsDialog.add(new JScrollPane(taskListView));
+
+        addTaskButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String taskName = taskNameField.getText().trim();
+                if (!taskName.isEmpty()) {
+                    taskListModel.addElement(taskName + " (uncompleted)"); // 既存のリストモデルにタスクを追加
+                    taskNameField.setText("");
+                    taskList.add(new Task(taskName)); // タスクリストに追加
+                }
+            }
+        });
+
+        // 設定確定ボタン
+        JButton confirmButton = new JButton("Confirm Settings");
+        settingsDialog.add(confirmButton);
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int workDuration = Integer.parseInt(workField.getText());
+                    int shortBreak = Integer.parseInt(shortBreakField.getText());
+                    int longBreak = Integer.parseInt(longBreakField.getText());
+                    statistics = new Statistics();
+                    session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);
+                    settingsDialog.dispose();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(settingsDialog, "Please enter valid numbers", "Input Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        settingsDialog.setVisible(true);
     }
 
     /*
@@ -312,20 +469,42 @@ public class PomodoroApp {
      * EFFECTS: Allows the user to mark a task as completed.
      */
     public void case6() {
-        if (taskList.isEmpty()) {
-            System.out.println("There is nothing to do anymore");
-            System.out.println("Nice work");
-        } else {
-            System.out.println("Which task? From the top, what number is it(from 0)?");
-            int index = input.nextInt();
-            Task finishedTask = taskList.get(index);  //!!
-            finishedTask.markIfCompleted();
+//        if (taskList.isEmpty()) {
+//            System.out.println("There is nothing to do anymore");
+//            System.out.println("Nice work");
+//        } else {
+//            System.out.println("Which task? From the top, what number is it(from 0)?");
+//            int index = input.nextInt();
+//            Task finishedTask = taskList.get(index);  //!!
+//            finishedTask.markIfCompleted();
+//
+//            int size = taskList.size();
+//            statistics.addCompletedTaskList(finishedTask);
+//            taskList.remove(finishedTask);
+//            System.out.println("Good job");
+//            show(taskList.size());
+//        }
+        int selectedIndex = taskListView.getSelectedIndex();
+        if (selectedIndex != -1) {
+            String taskName = taskListModel.get(selectedIndex).replace(" (uncompleted)", "");
+            // タスクリスト内の対応するTaskオブジェクトを検索し、それを完了としてマーク
+            for (Task task : taskList) {
+                if (task.getTaskName().equals(taskName)) {
+                    task.markIfCompleted();
+                    break;
+                }
+            }
+            taskListModel.set(selectedIndex, taskName + " (completed)"); // リストモデルを更新
+        }
+    }
 
-            int size = taskList.size();
-            statistics.addCompletedTaskList(finishedTask);
-            taskList.remove(finishedTask);
-            System.out.println("Good job");
-            show(taskList.size());
+    private void showStatistics() {
+        if (statistics != null) {
+            String statsText = "Completed Sessions: " + statistics.getCompletedSessions() + "\n" + "Total Work Time: "
+                    + statistics.getTotalWorkTime() + " seconds";
+            JOptionPane.showMessageDialog(frame, statsText, "Statistics", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(frame, "No statistics available.", "Statistics", JOptionPane.WARNING_MESSAGE);
         }
     }
 }
