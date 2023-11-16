@@ -7,7 +7,7 @@
   - Customizable Settings: Enable users to customize timer durations for work intervals, short breaks, and long breaks.
   - Notifications: Provide notifications or alerts when each timer interval ends.
   - Task Management: Allow users to associate tasks with each Pomodoro session, helping them track their progress.
-  - Statistics: Maintain statistics on completed Pomodoro sessions, including the number of sessions completed, total work time, and productivity trends.
+  - Statistics: Maintain statistics on completed Pomodoro sessions, including the number of sessions completed, total work time.
 
 *Who will use it?*
 - The Pomodoro Timer application can be used by a wide range of individuals who want to improve their time management and productivity

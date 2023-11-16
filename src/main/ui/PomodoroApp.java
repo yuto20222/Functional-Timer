@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.TimerTask;
+import java.util.Timer;
 
 // Represents the user interface for the Pomodoro application.
 // Allows users to set up work sessions, take breaks, and manage tasks.
@@ -40,6 +42,8 @@ public class PomodoroApp {
     private static final String JSON_STORE = "./data/pomodoro.json";
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
+    private Timer sessionMonitorTimer;
+    private boolean wasOnBreak;
 
     /*
      * MODIFIES: this
@@ -208,6 +212,7 @@ public class PomodoroApp {
      */
     private void start() {
         session.startWork();
+        startSessionMonitor();
     }
 
 
@@ -371,7 +376,8 @@ public class PomodoroApp {
                     session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);
                     settingsDialog.dispose();
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(settingsDialog, "Please enter valid numbers", "Input Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(settingsDialog, "Please enter valid numbers",
+                            "Input Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -423,10 +429,19 @@ public class PomodoroApp {
                 againForReset();
                 break;
             case 4:
-                session.stop();
+                stop();
                 System.out.println("Great Work!!");
                 again();
                 break;
+        }
+    }
+
+    public void stop() {
+        if (session != null) {
+            session.stop();
+        }
+        if (sessionMonitorTimer != null) {
+            sessionMonitorTimer.cancel();
         }
     }
 
@@ -530,5 +545,24 @@ public class PomodoroApp {
         } else {
             JOptionPane.showMessageDialog(frame, "No statistics available.", "Statistics", JOptionPane.WARNING_MESSAGE);
         }
+    }
+
+    private void startSessionMonitor() {
+        sessionMonitorTimer = new Timer();
+        sessionMonitorTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (session != null) {
+                    if (session.isOnBreak() && !wasOnBreak) {
+                        // 休憩が始まったとき
+                        JOptionPane.showMessageDialog(frame, "休憩が始まりました！", "休憩開始", JOptionPane.INFORMATION_MESSAGE);
+                    } else if (!session.isOnBreak() && wasOnBreak) {
+                        // 休憩が終わったとき
+                        JOptionPane.showMessageDialog(frame, "休憩が終わりました。作業を再開しましょう！", "休憩終了", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    wasOnBreak = session.isOnBreak();
+                }
+            }
+        }, 0, 1000); // 例えば、毎秒チェックする
     }
 }
