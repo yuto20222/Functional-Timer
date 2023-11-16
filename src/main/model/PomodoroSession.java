@@ -2,6 +2,8 @@ package model;
 
 import org.json.JSONObject;
 import persistence.Writable;
+
+import javax.swing.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,7 +18,7 @@ public class PomodoroSession implements Writable {
     private int currentDuration;
     private boolean isRunning;
     private boolean isOnBreak;
-    private final Statistics stat;
+    private Statistics stat;
     private Timer timer;
 
     /*
@@ -67,6 +69,9 @@ public class PomodoroSession implements Writable {
      */
     // https://www.delftstack.com/ja/howto/java/countdown-timer-java/
     public void startTimer() {
+        if (!isRunning) {
+            isRunning = true;  // for stop
+        }
         if (timer != null) {
             timer.cancel();
             timer = new Timer();
@@ -78,11 +83,13 @@ public class PomodoroSession implements Writable {
                 currentDuration = currentDuration - 1; //every second
                 if (currentDuration <= 0) {  //test for when timer is running out
                     timer.cancel();
-                    if (isOnBreak) {
-                        isOnBreak = false; // for break
+                    if (!isOnBreak) {
+//                        isOnBreak = false; // for break
                         endWork();
                     } else {
-                        endWork();
+//                        JOptionPane.showMessageDialog(null, "Break is done",
+//                        "let's study", JOptionPane.INFORMATION_MESSAGE);
+                        startWork(); //?????
                     }
                 }
             }
@@ -99,6 +106,7 @@ public class PomodoroSession implements Writable {
     public void endWork() {
         isRunning = false; //stop workSession
         timer.cancel();
+
         stat.addCompletedSession();
         stat.addTotalWorkTime(workDuration);
         if (stat.getCompletedSessions() % 3 == 0) {
@@ -116,6 +124,8 @@ public class PomodoroSession implements Writable {
         isRunning = true;
         isOnBreak = true;
         currentDuration = shortBreakDuration;
+//        JOptionPane.showMessageDialog(null, "short break begins", "let's take a break",
+//        JOptionPane.INFORMATION_MESSAGE);
         startTimer();
     }
 
@@ -127,6 +137,8 @@ public class PomodoroSession implements Writable {
         isRunning = true;
         isOnBreak = true;
         currentDuration = longBreakDuration;
+//        JOptionPane.showMessageDialog(null, "long break begins", "let's take a break",
+//        JOptionPane.INFORMATION_MESSAGE);
         startTimer();
     }
 
@@ -147,8 +159,8 @@ public class PomodoroSession implements Writable {
         timer.cancel();
         isRunning = false;
         isOnBreak = false;
-
-//        timer = new Timer();
+        stat = new Statistics();
+        timer = new Timer();
     }
 
     /*

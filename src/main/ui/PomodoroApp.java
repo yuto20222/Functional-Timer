@@ -143,8 +143,9 @@ public class PomodoroApp {
         resetTimerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // タイマーをリセットする処理
-                session.resetTimer();
+                if (session != null) {
+                    session.resetTimer();
+                }
             }
         });
         frame.add(resetTimerButton);
@@ -153,8 +154,9 @@ public class PomodoroApp {
         stopTimerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // タイマーを停止する処理
-                session.stop();
+                if (session != null) {
+                    session.stop();
+                }
             }
         });
         frame.add(stopTimerButton);
@@ -207,6 +209,7 @@ public class PomodoroApp {
     private void start() {
         session.startWork();
     }
+
 
     /*
      * MODIFIES: this
@@ -414,14 +417,35 @@ public class PomodoroApp {
     public void options1(int command) {
         switch (command) {
             case 3:
-                System.out.println("If you want to use this again, please resume this again");
+                System.out.println("Reset it!!");
                 session.resetTimer();
-                keepGoing = false;
+//                keepGoing = false;
+                againForReset();
                 break;
             case 4:
                 session.stop();
                 System.out.println("Great Work!!");
                 again();
+                break;
+        }
+    }
+
+    /*
+     * EFFECTS: Asks the user if they want to resume or leave.
+     */
+    public void againForReset() {
+        System.out.println("If you want to resume, press 1");
+        System.out.println("If you want to leave, press 2");
+        int num = input.nextInt();
+        switch (num) {
+            case 1:
+                keepGoing = true;
+                session.startWork();
+                show(taskList.size());
+                break;
+            case 2:
+                System.out.println("See you soon");
+                keepGoing = false;
                 break;
         }
     }
@@ -436,7 +460,7 @@ public class PomodoroApp {
         switch (num) {
             case 1:
                 keepGoing = true;
-                start();
+                session.startTimer();
                 show(taskList.size());
                 break;
             case 2:
