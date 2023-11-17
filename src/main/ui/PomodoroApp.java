@@ -295,6 +295,8 @@ public class PomodoroApp {
         String taskName = taskField.getText();
         if (!taskName.trim().isEmpty()) {
             taskListModel.addElement(taskName + " (uncompleted)"); // リストモデルにタスクを追加
+            Task newTask = new Task(taskName); //from above
+            taskList.add(newTask); //from above
             taskField.setText(""); // テキストフィールドをクリア
         }
     }
