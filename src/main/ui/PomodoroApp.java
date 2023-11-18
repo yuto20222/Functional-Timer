@@ -161,6 +161,7 @@ public class PomodoroApp {
             public void actionPerformed(ActionEvent e) {
                 if (session != null) {
                     session.stop();
+
                     int result = JOptionPane.showOptionDialog(
                             frame,
                             "タイマーを停止しました。どうしますか？",
@@ -177,6 +178,7 @@ public class PomodoroApp {
                         keepGoing = true;
                         session.startTimer();
                         updateTimerLabel(); // タイマーラベルを更新
+                        startSessionMonitor(); // セッションモニタータイマーを再スタート
                         show(taskList.size());
                     } else {
                         // 退出の場合
@@ -186,7 +188,6 @@ public class PomodoroApp {
             }
         });
         frame.add(stopTimerButton);
-
         frame.setVisible(true); // GUIを表示
     }
 
