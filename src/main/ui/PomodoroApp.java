@@ -149,6 +149,7 @@ public class PomodoroApp {
             public void actionPerformed(ActionEvent e) {
                 if (session != null) {
                     session.resetTimer();
+                    JOptionPane.showMessageDialog(frame, "タイマーがリセットされました。", "リセット完了", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -160,12 +161,51 @@ public class PomodoroApp {
             public void actionPerformed(ActionEvent e) {
                 if (session != null) {
                     session.stop();
+                    int result = JOptionPane.showOptionDialog(
+                            frame,
+                            "タイマーを停止しました。どうしますか？",
+                            "タイマー停止",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[]{"再開", "退出"},
+                            "再開"
+                    );
+
+                    if (result == JOptionPane.YES_OPTION) {
+                        // 再開の場合
+                        keepGoing = true;
+                        session.startTimer();
+                        updateTimerLabel(); // タイマーラベルを更新
+                        show(taskList.size());
+                    } else {
+                        // 退出の場合
+                        System.exit(0);
+                    }
                 }
             }
         });
         frame.add(stopTimerButton);
 
         frame.setVisible(true); // GUIを表示
+    }
+
+    private void updateTimerLabel() {
+        if (sessionMonitorTimer != null) {
+            sessionMonitorTimer.cancel();
+        }
+        sessionMonitorTimer = new Timer();
+        sessionMonitorTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (session != null && timerLabel != null) {
+                    int currentTime = session.getCurrentDuration();
+                    int minutes = currentTime / 60;
+                    int seconds = currentTime % 60;
+                    SwingUtilities.invokeLater(() -> timerLabel.setText(String.format("%02d:%02d", minutes, seconds)));
+                }
+            }
+        }, 0, 1000); // 毎秒更新
     }
 
     private void markTaskAsCompleted() {
@@ -355,6 +395,7 @@ public class PomodoroApp {
         addTaskButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                taskList = new ArrayList<>(); //追加した
                 String taskName = taskNameField.getText().trim();
                 if (!taskName.isEmpty()) {
                     taskListModel.addElement(taskName + " (uncompleted)"); // 既存のリストモデルにタスクを追加
@@ -384,6 +425,7 @@ public class PomodoroApp {
             }
         });
 
+        updateTimerLabel(); // タイマーラベルを更新
         settingsDialog.setVisible(true);
     }
 
