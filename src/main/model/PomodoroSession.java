@@ -158,7 +158,7 @@ public class PomodoroSession implements Writable {
         timer.cancel();
         isRunning = false;
         isOnBreak = false;
-        stat = new Statistics();
+//        stat = new Statistics();
         timer = new Timer();
     }
 

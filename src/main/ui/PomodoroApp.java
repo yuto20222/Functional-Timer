@@ -110,7 +110,14 @@ public class PomodoroApp {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                savePomodoroSession();
+                try {
+                    jsonWriter.open();
+                    jsonWriter.write(session, taskList);
+                    jsonWriter.close();
+                    JOptionPane.showMessageDialog(frame, "セッションが正常に保存されました。", "保存成功", JOptionPane.INFORMATION_MESSAGE);
+                } catch (FileNotFoundException ex) {
+                    JOptionPane.showMessageDialog(frame, "ファイルに保存できませんでした。", "保存エラー", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         frame.add(saveButton);
@@ -120,7 +127,17 @@ public class PomodoroApp {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loadPomodoroSession();
+                try {
+                    session = jsonReader.readPomodoroSession();
+                    statistics = session.getStatistics(); // 最新のStatisticsを設定
+                    taskList = jsonReader.readTasks();
+                    if (session.isRunning()) {
+                        session.startTimer();
+                    }
+                    JOptionPane.showMessageDialog(frame, "セッションが正常に読み込まれました。", "読み込み成功", JOptionPane.INFORMATION_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(frame, "ファイルからの読み込みに失敗しました。", "読み込みエラー", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         frame.add(loadButton);
@@ -149,7 +166,28 @@ public class PomodoroApp {
             public void actionPerformed(ActionEvent e) {
                 if (session != null) {
                     session.resetTimer();
-                    JOptionPane.showMessageDialog(frame, "タイマーがリセットされました。", "リセット完了", JOptionPane.INFORMATION_MESSAGE);
+
+                    int result = JOptionPane.showOptionDialog(
+                            frame,
+                            "タイマーがリセットされました。どうしますか？",
+                            "タイマーのリセット",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            new String[]{"続ける", "終了"},
+                            "続ける"
+                    );
+
+                    if (result == JOptionPane.YES_OPTION) {
+                        // 続けるを選択した場合
+                        session.startWork();
+                        updateTimerLabel();
+                        startSessionMonitor();
+                        showCurrentSettings();
+                    } else {
+                        // 終了を選択した場合
+                        System.exit(0);
+                    }
                 }
             }
         });
@@ -191,6 +229,16 @@ public class PomodoroApp {
         frame.setVisible(true); // GUIを表示
     }
 
+    private void showCurrentSettings() {
+        if (session != null) {
+            String settingsMessage = String.format("現在の設定：\n作業時間：%d分\n短い休憩時間：%d分\n長い休憩時間：%d分",
+                    session.getWorkDuration(),
+                    session.getShortBreakDuration(),
+                    session.getLongBreakDuration());
+            JOptionPane.showMessageDialog(frame, settingsMessage, "現在の設定", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
     private void updateTimerLabel() {
         if (sessionMonitorTimer != null) {
             sessionMonitorTimer.cancel();
@@ -217,9 +265,11 @@ public class PomodoroApp {
             taskName = taskName.replace(" (uncompleted)", "") + " (completed)";
             taskListModel.set(selectedIndex, taskName);
 
-            // 必要に応じて、内部の taskList でのタスク状態も更新
+            // 必要に応じて、内部の taskList でのタスク状態も更新q
             Task selectedTask = taskList.get(selectedIndex);
             selectedTask.markIfCompleted();
+            statistics.addCompletedTaskList(selectedTask);
+            taskList.remove(selectedTask);
         }
     }
 
@@ -333,6 +383,7 @@ public class PomodoroApp {
 //        Task newTask = new Task(taskName);
 //        taskList.add(newTask);
 //        show(taskList.size());
+
         String taskName = taskField.getText();
         if (!taskName.trim().isEmpty()) {
             taskListModel.addElement(taskName + " (uncompleted)"); // リストモデルにタスクを追加
