@@ -73,12 +73,7 @@ public class PomodoroApp {
 
         // タスク追加ボタン
         addTaskButton = new JButton("Add Task");
-        addTaskButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addTask();
-            }
-        });
+        addTaskButton.addActionListener(e -> addTask());
         frame.add(addTaskButton);
 
         // タスクリストモデルとビュー
@@ -91,74 +86,58 @@ public class PomodoroApp {
 
         // 完了マークボタン
         markCompletedButton = new JButton("Mark as Completed");
-        markCompletedButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                markTaskAsCompleted();
-            }
-        });
+        markCompletedButton.addActionListener(e -> markTaskAsCompleted());
         frame.add(markCompletedButton);
 
         //statボタン
         JButton statsButton = new JButton("View Statistics");
-        statsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showStatistics();
-            }
-        });
+        statsButton.addActionListener(e -> showStatistics());
         frame.add(statsButton);
 
         // セーブボタン
         saveButton = new JButton("Save Session");
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    jsonWriter.open();
-                    jsonWriter.write(session, taskList);
-                    jsonWriter.close();
-                    JOptionPane.showMessageDialog(frame, "Session successfully saved.", "Successful", JOptionPane.INFORMATION_MESSAGE);
-                } catch (FileNotFoundException ex) {
-                    JOptionPane.showMessageDialog(frame, "Could not save to file.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+        saveButton.addActionListener(e -> {
+            try {
+                jsonWriter.open();
+                jsonWriter.write(session, taskList);
+                jsonWriter.close();
+                JOptionPane.showMessageDialog(frame, "Session successfully saved.", "Successful", JOptionPane.INFORMATION_MESSAGE);
+            } catch (FileNotFoundException ex) {
+                JOptionPane.showMessageDialog(frame, "Could not save to file.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         frame.add(saveButton);
 
         // ロードボタン
         loadButton = new JButton("Load Session");
-        loadButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    session = jsonReader.readPomodoroSession();
-                    statistics = session.getStatistics(); // 最新のStatisticsを設定
-                    taskList = jsonReader.readTasks();
+        loadButton.addActionListener(e -> {
+            try {
+                session = jsonReader.readPomodoroSession();
+                statistics = session.getStatistics(); // 最新のStatisticsを設定
+                taskList = jsonReader.readTasks();
 
-                    // タスクリストモデルを更新
-                    taskListModel.clear(); // まず既存のリストをクリアする
+                // タスクリストモデルを更新
+                taskListModel.clear(); // まず既存のリストをクリアする
 
-                    List<Task> completedTasks = statistics.getCompletedTaskList();
-                    for (Task task : completedTasks) {
-                        String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
-                        taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
-                    }
-
-                    for (Task task : taskList) {
-                        String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
-                        taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
-                    }
-
-                    if (session.isRunning()) {
-                        session.startTimer();
-                        updateTimerLabelImmediately(); // タイマーラベルを即座に更新するメソッドを追加
-                    }
-
-                    JOptionPane.showMessageDialog(frame, "Session loaded successfully.", "Successful", JOptionPane.INFORMATION_MESSAGE);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(frame, "Failed to read from file.", "Error", JOptionPane.ERROR_MESSAGE);
+                List<Task> completedTasks = statistics.getCompletedTaskList();
+                for (Task task : completedTasks) {
+                    String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
+                    taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
                 }
+
+                for (Task task : taskList) {
+                    String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
+                    taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
+                }
+
+                if (session.isRunning()) {
+                    session.startTimer();
+                    updateTimerLabelImmediately(); // タイマーラベルを即座に更新するメソッドを追加
+                }
+
+                JOptionPane.showMessageDialog(frame, "Session loaded successfully.", "Successful", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(frame, "Failed to read from file.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         frame.add(loadButton);
@@ -168,69 +147,63 @@ public class PomodoroApp {
         frame.add(timerLabel);
 
         JButton resetTimerButton = new JButton("Reset Timer");
-        resetTimerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (session != null) {
-                    session.resetTimer();
-                    if (sessionMonitorTimer != null) {
-                        sessionMonitorTimer.cancel(); // 既存のタイマーをキャンセル
-                    }
-                    int result = JOptionPane.showOptionDialog(
-                            frame,
-                            "The timer has been reset. What should I do?",
-                            "Reset Timer",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            new String[]{"continue", "end"},
-                            "continue"
-                    );
+        resetTimerButton.addActionListener(e -> {
+            if (session != null) {
+                session.resetTimer();
+                if (sessionMonitorTimer != null) {
+                    sessionMonitorTimer.cancel(); // 既存のタイマーをキャンセル
+                }
+                int result = JOptionPane.showOptionDialog(
+                        frame,
+                        "The timer has been reset. What should I do?",
+                        "Reset Timer",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        new String[]{"continue", "end"},
+                        "continue"
+                );
 
-                    if (result == JOptionPane.YES_OPTION) {
-                        // 続けるを選択した場合
-                        session.startWork();
-                        updateTimerLabel();
-                        startSessionMonitor();
-                        showCurrentSettings();
-                    } else {
-                        // 終了を選択した場合
-                        System.exit(0);
-                    }
+                if (result == JOptionPane.YES_OPTION) {
+                    // 続けるを選択した場合
+                    session.startWork();
+                    updateTimerLabel();
+                    startSessionMonitor();
+                    showCurrentSettings();
+                } else {
+                    // 終了を選択した場合
+                    System.exit(0);
                 }
             }
         });
         frame.add(resetTimerButton);
 
         JButton stopTimerButton = new JButton("Stop Timer");
-        stopTimerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (session != null) {
-                    session.stop();
+        stopTimerButton.addActionListener(e -> {
+            if (session != null) {
+                session.stop();
 
-                    int result = JOptionPane.showOptionDialog(
-                            frame,
-                            "The timer has been stopped. What should I do?",
-                            "Timer stop",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            new String[]{"Resume", "Exit"},
-                            "Resume"
-                    );
+                int result = JOptionPane.showOptionDialog(
+                        frame,
+                        "The timer has been stopped. What should I do?",
+                        "Timer stop",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        new String[]{"Resume", "Exit"},
+                        "Resume"
+                );
 
-                    if (result == JOptionPane.YES_OPTION) {
-                        // 再開の場合
-                        keepGoing = true;
-                        session.startTimer();
-                        updateTimerLabel(); // タイマーラベルを更新
-                        startSessionMonitor(); // セッションモニタータイマーを再スタート
-                        show(taskList.size());
-                    } else {
-                        // 退出の場合
-                        System.exit(0);
-                    }
+                if (result == JOptionPane.YES_OPTION) {
+                    // 再開の場合
+                    keepGoing = true;
+                    session.startTimer();
+                    updateTimerLabel(); // タイマーラベルを更新
+                    startSessionMonitor(); // セッションモニタータイマーを再スタート
+                    show(taskList.size());
+                } else {
+                    // 退出の場合
+                    System.exit(0);
                 }
             }
         });
@@ -490,36 +463,30 @@ public class PomodoroApp {
         JList<String> taskListView = new JList<>(taskListModel);
         settingsDialog.add(new JScrollPane(taskListView));
 
-        addTaskButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                taskList = new ArrayList<>(); //追加した
-                String taskName = taskNameField.getText().trim();
-                if (!taskName.isEmpty()) {
-                    taskListModel.addElement(taskName + " (uncompleted)"); // 既存のリストモデルにタスクを追加
-                    taskNameField.setText("");
-                    taskList.add(new Task(taskName)); // タスクリストに追加
-                }
+        addTaskButton.addActionListener(e -> {
+            taskList = new ArrayList<>(); //追加した
+            String taskName = taskNameField.getText().trim();
+            if (!taskName.isEmpty()) {
+                taskListModel.addElement(taskName + " (uncompleted)"); // 既存のリストモデルにタスクを追加
+                taskNameField.setText("");
+                taskList.add(new Task(taskName)); // タスクリストに追加
             }
         });
 
         // 設定確定ボタン
         JButton confirmButton = new JButton("Confirm Settings");
         settingsDialog.add(confirmButton);
-        confirmButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    int workDuration = Integer.parseInt(workField.getText());
-                    int shortBreak = Integer.parseInt(shortBreakField.getText());
-                    int longBreak = Integer.parseInt(longBreakField.getText());
-                    statistics = new Statistics();
-                    session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);
-                    settingsDialog.dispose();
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(settingsDialog, "Please enter valid numbers",
-                            "Input Error", JOptionPane.ERROR_MESSAGE);
-                }
+        confirmButton.addActionListener(e -> {
+            try {
+                int workDuration = Integer.parseInt(workField.getText());
+                int shortBreak = Integer.parseInt(shortBreakField.getText());
+                int longBreak = Integer.parseInt(longBreakField.getText());
+                statistics = new Statistics();
+                session = new PomodoroSession(workDuration, shortBreak, longBreak, statistics);
+                settingsDialog.dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(settingsDialog, "Please enter valid numbers",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -532,19 +499,19 @@ public class PomodoroApp {
      * EFFECTS: Collects tasks from the user.
      * Prompts the user to input the number of tasks and their names.
      */
-    public void collectTasks() {
-        System.out.println("How many tasks do you want to finish?: ");
-        taskList = new ArrayList<>();
-        int num = input.nextInt();
-        input.nextLine();
-        for (int i = 0; i < num; i++) {
-            System.out.println("What's the name of task?: ");
-            String name = input.nextLine();
-            Task task = new Task(name);
-            taskList.add(task);
-        }
-        show(num);
-    }
+//    public void collectTasks() {
+//        System.out.println("How many tasks do you want to finish?: ");
+//        taskList = new ArrayList<>();
+//        int num = input.nextInt();
+//        input.nextLine();
+//        for (int i = 0; i < num; i++) {
+//            System.out.println("What's the name of task?: ");
+//            String name = input.nextLine();
+//            Task task = new Task(name);
+//            taskList.add(task);
+//        }
+//        show(num);
+//    }
 
     /*
      * EFFECTS: Displays the names of the tasks.
