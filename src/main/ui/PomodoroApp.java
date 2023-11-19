@@ -114,9 +114,9 @@ public class PomodoroApp {
                     jsonWriter.open();
                     jsonWriter.write(session, taskList);
                     jsonWriter.close();
-                    JOptionPane.showMessageDialog(frame, "セッションが正常に保存されました。", "保存成功", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Session successfully saved.", "Successful", JOptionPane.INFORMATION_MESSAGE);
                 } catch (FileNotFoundException ex) {
-                    JOptionPane.showMessageDialog(frame, "ファイルに保存できませんでした。", "保存エラー", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Could not save to file.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -134,9 +134,9 @@ public class PomodoroApp {
                     if (session.isRunning()) {
                         session.startTimer();
                     }
-                    JOptionPane.showMessageDialog(frame, "セッションが正常に読み込まれました。", "読み込み成功", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Session loaded successfully.", "Successful", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(frame, "ファイルからの読み込みに失敗しました。", "読み込みエラー", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Failed to read from file.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -166,16 +166,18 @@ public class PomodoroApp {
             public void actionPerformed(ActionEvent e) {
                 if (session != null) {
                     session.resetTimer();
-
+                    if (sessionMonitorTimer != null) {
+                        sessionMonitorTimer.cancel(); // 既存のタイマーをキャンセル
+                    }
                     int result = JOptionPane.showOptionDialog(
                             frame,
-                            "タイマーがリセットされました。どうしますか？",
-                            "タイマーのリセット",
+                            "The timer has been reset. What should I do?",
+                            "Reset Timer",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
                             null,
-                            new String[]{"続ける", "終了"},
-                            "続ける"
+                            new String[]{"continue", "end"},
+                            "continue"
                     );
 
                     if (result == JOptionPane.YES_OPTION) {
@@ -202,13 +204,13 @@ public class PomodoroApp {
 
                     int result = JOptionPane.showOptionDialog(
                             frame,
-                            "タイマーを停止しました。どうしますか？",
-                            "タイマー停止",
+                            "The timer has been stopped. What should I do?",
+                            "Timer stop",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
                             null,
-                            new String[]{"再開", "退出"},
-                            "再開"
+                            new String[]{"Resume", "Exit"},
+                            "Resume"
                     );
 
                     if (result == JOptionPane.YES_OPTION) {
@@ -231,11 +233,11 @@ public class PomodoroApp {
 
     private void showCurrentSettings() {
         if (session != null) {
-            String settingsMessage = String.format("現在の設定：\n作業時間：%d分\n短い休憩時間：%d分\n長い休憩時間：%d分",
+            String settingsMessage = String.format("Current settings：\nWorking time：%d sec\nShort Break：%d sec\nLong Break：%d sec",
                     session.getWorkDuration(),
                     session.getShortBreakDuration(),
                     session.getLongBreakDuration());
-            JOptionPane.showMessageDialog(frame, settingsMessage, "現在の設定", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(frame, settingsMessage, "Current settings", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -359,17 +361,24 @@ public class PomodoroApp {
     private void loadPomodoroSession() {
         try {
             session = jsonReader.readPomodoroSession();
-            statistics = session.getStatistics(); // ここで最新のStatisticsを設定
+            statistics = session.getStatistics(); // 最新のStatisticsを設定
             taskList = jsonReader.readTasks();
+
+            // タスクリストモデルを更新
+            taskListModel.clear();
+            for (Task task : taskList) {
+                String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
+                taskListModel.addElement(task.getTaskName() + taskStatus);
+            }
 
             // セッションの状態を再開
             if (session.isRunning()) {
-                // もしセッションが実行中であれば、タイマーを再開する
                 session.startTimer();
             }
 
-        } catch (IOException e) {
-            System.out.println("Unable to read from file: " + JSON_STORE);
+            JOptionPane.showMessageDialog(frame, "Session loaded successfully.", "Successful", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame, "Failed to read from file.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

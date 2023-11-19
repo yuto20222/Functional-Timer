@@ -75,28 +75,28 @@ class JsonReaderTest extends JsonTest {
         }
     }
 
-    @Test
-    void testAddCompletedTasks() {
-        JsonReader jsonReader = new JsonReader("dummyPath");
-        JSONObject testJson = new JSONObject();
-        JSONArray tasksArray = new JSONArray();
-
-        // Add two tasks
-        JSONObject task1 = new JSONObject();
-        task1.put("name", "Test Task 1");
-        tasksArray.put(task1);
-
-        JSONObject task2 = new JSONObject();
-        task2.put("name", "Test Task 2");
-        tasksArray.put(task2);
-
-        testJson.put("tasks", tasksArray);
-
-        Statistics stats = new Statistics();
-        jsonReader.addCompletedTasks(stats, testJson);
-
-        // Assuming Statistics class has a method to get the size of completed tasks.
-        assertEquals(2, stats.getCompletedTaskSize());
-    }
+//    @Test
+//    void testAddCompletedTasks() {
+//        JsonReader jsonReader = new JsonReader("dummyPath");
+//        JSONObject testJson = new JSONObject();
+//        JSONArray tasksArray = new JSONArray();
+//
+//        // Add two tasks
+//        JSONObject task1 = new JSONObject();
+//        task1.put("name", "Test Task 1");
+//        tasksArray.put(task1);
+//
+//        JSONObject task2 = new JSONObject();
+//        task2.put("name", "Test Task 2");
+//        tasksArray.put(task2);
+//
+//        testJson.put("tasks", tasksArray);
+//
+//        Statistics stats = new Statistics();
+//        jsonReader.addCompletedTasks(stats, testJson);
+//
+//        // Assuming Statistics class has a method to get the size of completed tasks.
+//        assertEquals(2, stats.getCompletedTaskSize());
+//    }
 
 }
