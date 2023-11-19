@@ -683,6 +683,10 @@ public class PomodoroApp {
         }
     }
 
+    /*
+     * EFFECTS: Displays statistics of the pomodoro sessions if available. Shows a message dialog with the number of
+     * completed sessions and total work time in seconds. If no statistics are available, shows a warning message.
+     */
     private void showStatistics() {
         if (statistics != null) {
             String statsText = "Completed Sessions: " + statistics.getCompletedSessions() + "\n" + "Total Work Time: "
@@ -693,6 +697,13 @@ public class PomodoroApp {
         }
     }
 
+    /*
+     * REQUIRES: session must be a valid PomodoroSession instance
+     * MODIFIES: this
+     * EFFECTS: Starts a timer task that checks every second if a break has started or ended within the session.
+     * If a break has started, shows an information message dialog. If a break has ended, shows an information message
+     * dialog to resume work. Updates the wasOnBreak flag according to the current session state.
+     */
     private void startSessionMonitor() {
         sessionMonitorTimer = new Timer();
         sessionMonitorTimer.scheduleAtFixedRate(new TimerTask() {
