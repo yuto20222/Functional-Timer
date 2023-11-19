@@ -68,6 +68,10 @@ public class Statistics implements Writable {
         return completedTaskList.size();
     }
 
+    public List<Task> getCompletedTaskList() {
+        return completedTaskList;
+    }
+
     /*
      * EFFECTS: Returns this statistics as a JSON object.
      */

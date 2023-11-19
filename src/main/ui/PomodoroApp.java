@@ -131,9 +131,26 @@ public class PomodoroApp {
                     session = jsonReader.readPomodoroSession();
                     statistics = session.getStatistics(); // 最新のStatisticsを設定
                     taskList = jsonReader.readTasks();
+
+                    // タスクリストモデルを更新
+                    taskListModel.clear(); // まず既存のリストをクリアする
+
+                    List<Task> completedTasks = statistics.getCompletedTaskList();
+                    for (Task task : completedTasks) {
+                        String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
+                        taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
+                    }
+
+                    for (Task task : taskList) {
+                        String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
+                        taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
+                    }
+
                     if (session.isRunning()) {
                         session.startTimer();
+                        updateTimerLabelImmediately(); // タイマーラベルを即座に更新するメソッドを追加
                     }
+
                     JOptionPane.showMessageDialog(frame, "Session loaded successfully.", "Successful", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(frame, "Failed to read from file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -229,6 +246,15 @@ public class PomodoroApp {
         });
         frame.add(stopTimerButton);
         frame.setVisible(true); // GUIを表示
+    }
+
+    private void updateTimerLabelImmediately() {
+        if (session != null && timerLabel != null) {
+            int currentTime = session.getCurrentDuration();
+            int minutes = currentTime / 60;
+            int seconds = currentTime % 60;
+            timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
+        }
     }
 
     private void showCurrentSettings() {
