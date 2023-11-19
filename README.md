@@ -19,9 +19,16 @@
 ## UserStory
 - As a user, I want to be able to add completed study session to the statics:
 - As a user, I want to be able to view the list of completed study session in my statics:
-- As a user, I want to be able to reset a Pomodoro session: // difficult
+- As a user, I want to be able to reset a Pomodoro Timer(just Timer): // difficult
 - As a user, I want to be able to pause and resume a Pomodoro session:
-- As a user, I want to add a new task to my Pomodoro session:
+- As a user, I want to be able to add a new task to my Pomodoro session(List of Tasks):
 
 - As a user, I want to save my current timer condition, statistics, and finished tasks to a file.
 - As a user, I want to reload my saved timer condition, statistics, and finished tasks from a file.
+
+# Instructions for Grader
+- You can generate the first required action related to the user story "adding Nes Tasks to Pomodoro session(List of Task)" by clicking the button labelled "Add Task"
+- You can generate the second required action related to the user story "adding multiple Xs to a Y" 
+- You can locate my visual component by...
+- You can save the state of my application by clicking "Save Session" button
+- You can reload the state of my application clicking "Load Session" button
