@@ -57,6 +57,10 @@ public class PomodoroApp {
         runApp();
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Sets up the frame and its components for the Pomodoro application.
+     */
     private void initializeUI() {
         frame = new JFrame("Pomodoro App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -163,20 +167,6 @@ public class PomodoroApp {
         timerLabel = new JLabel("00:00");
         frame.add(timerLabel);
 
-//        workField = new JTextField(5);
-//        shortBreakField = new JTextField(5);
-//        longBreakField = new JTextField(5);
-//
-//        // Add the components to the frame with labels
-//        frame.add(new JLabel("Work Duration (minutes):"));
-//        frame.add(workField);
-//
-//        frame.add(new JLabel("Short Break Duration (minutes):"));
-//        frame.add(shortBreakField);
-//
-//        frame.add(new JLabel("Long Break Duration (minutes):"));
-//        frame.add(longBreakField);
-
         JButton resetTimerButton = new JButton("Reset Timer");
         resetTimerButton.addActionListener(new ActionListener() {
             @Override
@@ -248,6 +238,10 @@ public class PomodoroApp {
         frame.setVisible(true); // GUIを表示
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Updates the timer label to immediately reflect the current time of the session.
+     */
     private void updateTimerLabelImmediately() {
         if (session != null && timerLabel != null) {
             int currentTime = session.getCurrentDuration();
@@ -257,6 +251,9 @@ public class PomodoroApp {
         }
     }
 
+    /*
+     * EFFECTS: If a session exists, displays the current settings of the Pomodoro session in a dialog window.
+     */
     private void showCurrentSettings() {
         if (session != null) {
             String settingsMessage = String.format("Current settings：\nWorking time：%d sec\nShort Break：%d sec\nLong Break：%d sec",
@@ -267,6 +264,11 @@ public class PomodoroApp {
         }
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Starts or restarts the sessionMonitorTimer to update the timerLabel every second
+     *          with the current time from the session. If a sessionMonitorTimer is already running, it is first cancelled.
+     */
     private void updateTimerLabel() {
         if (sessionMonitorTimer != null) {
             sessionMonitorTimer.cancel();
@@ -285,6 +287,10 @@ public class PomodoroApp {
         }, 0, 1000); // 毎秒更新
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Marks a selected task as completed and updates the task list model accordingly.
+     */
     private void markTaskAsCompleted() {
         int selectedIndex = taskListView.getSelectedIndex();
         if (selectedIndex != -1) {
@@ -300,7 +306,6 @@ public class PomodoroApp {
             taskList.remove(selectedTask);
         }
     }
-
 
 
     /*
@@ -450,6 +455,12 @@ public class PomodoroApp {
         showSettingsAndTaskDialog();
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Opens a dialog for the user to enter the settings for work duration, short break, and long break durations,
+     *          as well as to add new tasks. Updates session settings and task list based on user input.
+     *          Validates numerical input and handles incorrect formats with an error message.
+     */
     private void showSettingsAndTaskDialog() {
         JDialog settingsDialog = new JDialog(frame, "Settings and Tasks", true);
         settingsDialog.setLayout(new BoxLayout(settingsDialog.getContentPane(), BoxLayout.Y_AXIS));
@@ -567,6 +578,10 @@ public class PomodoroApp {
         }
     }
 
+    /*
+     * MODIFIES: this.session, this.sessionMonitorTimer
+     * EFFECTS: Stops the current pomodoro session and cancels the session monitoring timer.
+     */
     public void stop() {
         if (session != null) {
             session.stop();
@@ -686,10 +701,10 @@ public class PomodoroApp {
                 if (session != null) {
                     if (session.isOnBreak() && !wasOnBreak) {
                         // 休憩が始まったとき
-                        JOptionPane.showMessageDialog(frame, "休憩が始まりました！", "休憩開始", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, "A break has begun!", "Break begins", JOptionPane.INFORMATION_MESSAGE);
                     } else if (!session.isOnBreak() && wasOnBreak) {
                         // 休憩が終わったとき
-                        JOptionPane.showMessageDialog(frame, "休憩が終わりました。作業を再開しましょう！", "休憩終了", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, "Break is over. Let's resume work!", "End of break", JOptionPane.INFORMATION_MESSAGE);
                     }
                     wasOnBreak = session.isOnBreak();
                 }
