@@ -64,6 +64,7 @@ public class PomodoroApp {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 400);
         frame.setLayout(new FlowLayout()); // レイアウトの設定
+        taskList = new ArrayList<>();
 
         initializeTaskInputComponents();
         initializeTaskListView();
@@ -310,22 +311,49 @@ public class PomodoroApp {
      * MODIFIES: this
      * EFFECTS: Marks a selected task as completed and updates the task list model accordingly.
      */
+//    private void markTaskAsCompleted() {
+//        int selectedIndex = taskListView.getSelectedIndex();
+//        if (selectedIndex != -1) {
+//            String taskName = taskListModel.get(selectedIndex);
+//            // タスク名から "(uncompleted)" を削除し、"(completed)" を追加
+//            taskName = taskName.replace(" (uncompleted)", "") + " (completed)";
+//            taskListModel.set(selectedIndex, taskName);
+//
+//            // 必要に応じて、内部の taskList でのタスク状態も更新
+//            Task selectedTask = taskList.get(selectedIndex);
+//            selectedTask.markIfCompleted();
+//            statistics.addCompletedTaskList(selectedTask);
+//            taskList.remove(selectedTask);
+//        }
+//    }
+
     private void markTaskAsCompleted() {
         int selectedIndex = taskListView.getSelectedIndex();
-        if (selectedIndex != -1) {
-            String taskName = taskListModel.get(selectedIndex);
-            // タスク名から "(uncompleted)" を削除し、"(completed)" を追加
-            taskName = taskName.replace(" (uncompleted)", "") + " (completed)";
-            taskListModel.set(selectedIndex, taskName);
-
-            // 必要に応じて、内部の taskList でのタスク状態も更新q
-            Task selectedTask = taskList.get(selectedIndex);
-            selectedTask.markIfCompleted();
-            statistics.addCompletedTaskList(selectedTask);
-            taskList.remove(selectedTask);
+        if (selectedIndex < 0 || selectedIndex >= taskListModel.size()) {
+            JOptionPane.showMessageDialog(frame, "Invalid task selection.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-    }
 
+        String taskNameWithStatus = taskListModel.get(selectedIndex);
+        // "(uncompleted)" や "(completed)" を取り除いた純粋なタスク名を取得
+        String taskName = taskNameWithStatus.replace(" (uncompleted)", "").replace(" (completed)", "");
+
+        // taskList 内でタスクを検索
+        for (Task task : taskList) {
+            if (task.getTaskName().equals(taskName) && !task.isCompleted()) {
+                task.markIfCompleted();
+                statistics.addCompletedTaskList(task);
+                taskListModel.set(selectedIndex, taskName + " (completed)");
+                taskList.remove(task);
+                return;
+            }
+        }
+
+        // タスクが見つからない場合のエラー処理
+        JOptionPane.showMessageDialog(frame, "Task not found in the list.",
+                "Error", JOptionPane.ERROR_MESSAGE);
+    }
 
     /*
      * MODIFIES: this
