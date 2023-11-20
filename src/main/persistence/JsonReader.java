@@ -91,7 +91,8 @@ public class JsonReader {
         JSONObject statisticsData = sessionData.getJSONObject("statistics");
         Statistics stat = parseStatistics(statisticsData);
 
-        PomodoroSession pomodoroSession = new PomodoroSession(setWorkDuration, setShortBreakDuration, setLongBreakDuration, stat);
+        PomodoroSession pomodoroSession
+                = new PomodoroSession(setWorkDuration, setShortBreakDuration, setLongBreakDuration, stat);
 
         pomodoroSession.setRunning(isRunning);
         pomodoroSession.setOnBreak(isOnBreak);
