@@ -99,7 +99,7 @@ public class PomodoroApp {
     private void showCurrentSettings() {
         if (session != null) {
             String settingsMessage
-                    = String.format("Current settings：\nWorking time：%d sec\nShort Break：%d sec\nLong Break：%d sec",
+                    = String.format("Current settings:\nWorking time: %d sec\nShort Break: %d sec\nLong Break: %d sec",
                     session.getWorkDuration(),
                     session.getShortBreakDuration(),
                     session.getLongBreakDuration());
