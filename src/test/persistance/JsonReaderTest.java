@@ -75,6 +75,43 @@ class JsonReaderTest extends JsonTest {
         }
     }
 
+    @Test
+    void testReadStatistics() {
+        try {
+            // Set up a PomodoroSession with Statistics and write it to a file
+            Statistics stats = new Statistics();
+            stats.addCompletedSession();
+            stats.addTotalWorkTime(120);
+            stats.addCompletedTaskList(new Task("Completed Task 1"));
+
+            PomodoroSession ps = new PomodoroSession(25, 5, 15, stats);
+            JsonWriter writer = new JsonWriter("./data/testReadStatistics.json");
+            writer.open();
+            writer.write(ps, new ArrayList<>());
+            writer.close();
+
+            // Read the file and assert the statistics
+            JsonReader reader = new JsonReader("./data/testReadStatistics.json");
+            PomodoroSession readSession = reader.readPomodoroSession();
+            Statistics readStats = readSession.getStatistics();
+
+            assertEquals(1, readStats.getCompletedSessions());
+            assertEquals(120, readStats.getTotalWorkTime());
+            assertEquals(1, readStats.getCompletedTaskList().size());
+            checkTask("Completed Task 1", false, readStats.getCompletedTaskList().get(0));
+
+        } catch (IOException e) {
+            fail("IOException should not have been thrown");
+        }
+    }
+
+    @Test
+    void testIOExceptionHandling() {
+        JsonReader reader = new JsonReader("nonexistentfile.json");
+        assertThrows(IOException.class, reader::readPomodoroSession);
+        assertThrows(IOException.class, reader::readTasks);
+    }
+
 //    @Test
 //    void testAddCompletedTasks() {
 //        JsonReader jsonReader = new JsonReader("dummyPath");
