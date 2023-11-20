@@ -70,7 +70,11 @@ public class PomodoroApp {
         initializeStatisticsButton();
         initializeSaveButton();
         initializeLoadButton();
-        initializeTimerComponents();
+
+        // タイマー関連のコンポーネントを初期化
+        initializeTimerLabel();
+        initializeResetTimerButton();
+        initializeStopTimerButton();
 
         frame.setVisible(true); // GUIを表示
     }
@@ -93,7 +97,8 @@ public class PomodoroApp {
      */
     private void showCurrentSettings() {
         if (session != null) {
-            String settingsMessage = String.format("Current settings：\nWorking time：%d sec\nShort Break：%d sec\nLong Break：%d sec",
+            String settingsMessage
+                    = String.format("Current settings：\nWorking time：%d sec\nShort Break：%d sec\nLong Break：%d sec",
                     session.getWorkDuration(),
                     session.getShortBreakDuration(),
                     session.getLongBreakDuration());
@@ -179,106 +184,126 @@ public class PomodoroApp {
     }
 
     private void initializeLoadButton() {
-        // ロードボタン
+        // ロードボタンの初期化
         loadButton = new JButton("Load Session");
-        loadButton.addActionListener(e -> {
-            try {
-                session = jsonReader.readPomodoroSession();
-                statistics = session.getStatistics(); // 最新のStatisticsを設定
-                taskList = jsonReader.readTasks();
-                // タスクリストモデルを更新
-                taskListModel.clear(); // まず既存のリストをクリアする
-                List<Task> completedTasks = statistics.getCompletedTaskList();
-                for (Task task : completedTasks) {
-                    String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
-                    taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
-                }
-                for (Task task : taskList) {
-                    String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
-                    taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
-                }
-                if (session.isRunning()) {
-                    session.startTimer();
-                    updateTimerLabelImmediately(); // タイマーラベルを即座に更新するメソッドを追加
-                }
-                JOptionPane.showMessageDialog(frame, "Session loaded successfully.",
-                        "Successful", JOptionPane.INFORMATION_MESSAGE);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(frame, "Failed to read from file.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        loadButton.addActionListener(e -> loadSession());
         frame.add(loadButton);
     }
 
-    private void initializeTimerComponents() {
-        // タイマーラベルと制御ボタンの初期化
-        // タイマーラベル
+    private void loadSession() {
+        // ロード処理の実行
+        try {
+            session = jsonReader.readPomodoroSession();
+            statistics = session.getStatistics(); // 最新のStatisticsを設定
+            taskList = jsonReader.readTasks();
+            updateTaskListModel();
+            if (session.isRunning()) {
+                session.startTimer();
+                updateTimerLabelImmediately(); // タイマーラベルを即座に更新するメソッドを追加
+            }
+            JOptionPane.showMessageDialog(frame, "Session loaded successfully.",
+                    "Successful", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame, "Failed to read from file.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateTaskListModel() {
+        // タスクリストモデルを更新
+        taskListModel.clear(); // まず既存のリストをクリアする
+        List<Task> completedTasks = statistics.getCompletedTaskList();
+        for (Task task : completedTasks) {
+            String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
+            taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
+        }
+        for (Task task : taskList) {
+            String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
+            taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
+        }
+    }
+
+    private void initializeTimerLabel() {
+        // タイマーラベルの初期化
         timerLabel = new JLabel("00:00");
         frame.add(timerLabel);
+    }
 
+    private void initializeResetTimerButton() {
+        // リセットタイマーボタンの初期化
         JButton resetTimerButton = new JButton("Reset Timer");
-        resetTimerButton.addActionListener(e -> {
-            if (session != null) {
-                session.resetTimer();
-                if (sessionMonitorTimer != null) {
-                    sessionMonitorTimer.cancel(); // 既存のタイマーをキャンセル
-                }
-                int result = JOptionPane.showOptionDialog(
-                        frame,
-                        "The timer has been reset. What should I do?",
-                        "Reset Timer",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        new String[]{"continue", "end"},
-                        "continue"
-                );
-
-                if (result == JOptionPane.YES_OPTION) {
-                    // 続けるを選択した場合
-                    session.startWork();
-                    updateTimerLabel();
-                    startSessionMonitor();
-                    showCurrentSettings();
-                } else {
-                    // 終了を選択した場合
-                    System.exit(0);
-                }
-            }
-        });
+        resetTimerButton.addActionListener(e -> resetTimer());
         frame.add(resetTimerButton);
+    }
 
+    private void resetTimer() {
+        if (session == null) {
+            return; // 早期リターン
+        }
+
+        session.resetTimer();
+        cancelExistingTimer(); // タイマーのキャンセルを別のメソッドに分離
+
+        int result = JOptionPane.showOptionDialog(frame, "The timer has been reset. What should I do?",
+                "Reset Timer", JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null,
+                new String[]{"continue", "end"}, "continue");
+
+        if (result == JOptionPane.YES_OPTION) {
+            continueAfterReset();
+        } else {
+            System.exit(0);
+        }
+    }
+
+    private void cancelExistingTimer() {
+        if (sessionMonitorTimer != null) {
+            sessionMonitorTimer.cancel();
+        }
+    }
+
+    private void continueAfterReset() {
+        session.startWork();
+        updateTimerLabel();
+        startSessionMonitor();
+        showCurrentSettings();
+    }
+
+    private void initializeStopTimerButton() {
+        // ストップタイマーボタンの初期化
         JButton stopTimerButton = new JButton("Stop Timer");
-        stopTimerButton.addActionListener(e -> {
-            if (session != null) {
-                session.stop();
-
-                int result = JOptionPane.showOptionDialog(
-                        frame,
-                        "The timer has been stopped. What should I do?",
-                        "Timer stop",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        new String[]{"Resume", "Exit"},
-                        "Resume"
-                );
-
-                if (result == JOptionPane.YES_OPTION) {
-                    // 再開の場合
-                    keepGoing = true;
-                    session.startTimer();
-                    updateTimerLabel(); // タイマーラベルを更新
-                    startSessionMonitor(); // セッションモニタータイマーを再スタート
-                    show(taskList.size());
-                } else {
-                    // 退出の場合
-                    System.exit(0);
-                }
-            }
-        });
+        stopTimerButton.addActionListener(e -> stopTimer());
         frame.add(stopTimerButton);
+    }
+
+    private void stopTimer() {
+        // ストップタイマーボタンのアクション
+        if (session != null) {
+            session.stop();
+
+            int result = JOptionPane.showOptionDialog(
+                    frame,
+                    "The timer has been stopped. What should I do?",
+                    "Timer stop",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    new String[]{"Resume", "Exit"},
+                    "Resume"
+            );
+
+            if (result == JOptionPane.YES_OPTION) {
+                // 再開の場合
+                keepGoing = true;
+                session.startTimer();
+                updateTimerLabel();
+                startSessionMonitor();
+                show(taskList.size());
+            } else {
+                // 退出の場合
+                System.exit(0);
+            }
+        }
     }
 
     /*
@@ -519,6 +544,7 @@ public class PomodoroApp {
         updateTimerLabel(); // タイマーラベルを更新
         settingsDialog.setVisible(true);
     }
+
 
     /*
      * MODIFIES: this
