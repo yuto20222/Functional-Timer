@@ -490,40 +490,38 @@ public class PomodoroApp {
         settingsDialog.setLayout(new BoxLayout(settingsDialog.getContentPane(), BoxLayout.Y_AXIS));
         settingsDialog.setSize(400, 300);
 
+        JTextField[] fields = initializeSettingsFields(settingsDialog);
+        JTextField workField = fields[0];
+        JTextField shortBreakField = fields[1];
+        JTextField longBreakField = fields[2];
+
+        initializeTaskInputComponents2(settingsDialog);
+        initializeConfirmSettingsButton(settingsDialog, workField, shortBreakField, longBreakField);
+
+        updateTimerLabel(); // タイマーラベルを更新
+        settingsDialog.setVisible(true);
+    }
+
+    private JTextField[] initializeSettingsFields(JDialog settingsDialog) {
         // 設定のためのテキストフィールド
         JTextField workField = new JTextField(5);
+        JTextField shortBreakField = new JTextField(5);
+        JTextField longBreakField = new JTextField(5);
+
         settingsDialog.add(new JLabel("Work Duration (minutes):"));
         settingsDialog.add(workField);
 
-        JTextField shortBreakField = new JTextField(5);
         settingsDialog.add(new JLabel("Short Break Duration (minutes):"));
         settingsDialog.add(shortBreakField);
 
-        JTextField longBreakField = new JTextField(5);
         settingsDialog.add(new JLabel("Long Break Duration (minutes):"));
         settingsDialog.add(longBreakField);
 
-        // タスクのためのテキストフィールドとボタン
-        JTextField taskNameField = new JTextField(20);
-        settingsDialog.add(new JLabel("Task Name:"));
-        settingsDialog.add(taskNameField);
-        JButton addTaskButton = new JButton("Add Task");
-        settingsDialog.add(addTaskButton);
+        return new JTextField[]{workField, shortBreakField, longBreakField};
+    }
 
-        // 既存の taskListModel を使用
-        JList<String> taskListView = new JList<>(taskListModel);
-        settingsDialog.add(new JScrollPane(taskListView));
-
-        addTaskButton.addActionListener(e -> {
-            taskList = new ArrayList<>(); //追加した
-            String taskName = taskNameField.getText().trim();
-            if (!taskName.isEmpty()) {
-                taskListModel.addElement(taskName + " (uncompleted)"); // 既存のリストモデルにタスクを追加
-                taskNameField.setText("");
-                taskList.add(new Task(taskName)); // タスクリストに追加
-            }
-        });
-
+    private void initializeConfirmSettingsButton(JDialog settingsDialog, JTextField workField,
+                                                 JTextField shortBreakField, JTextField longBreakField) {
         // 設定確定ボタン
         JButton confirmButton = new JButton("Confirm Settings");
         settingsDialog.add(confirmButton);
@@ -540,9 +538,30 @@ public class PomodoroApp {
                         "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
 
-        updateTimerLabel(); // タイマーラベルを更新
-        settingsDialog.setVisible(true);
+    private void initializeTaskInputComponents2(JDialog settingsDialog) {
+        // タスクのためのテキストフィールドとボタンの初期化
+        JTextField taskNameField = new JTextField(20);
+        JButton addTaskButton = new JButton("Add Task");
+
+        settingsDialog.add(new JLabel("Task Name:"));
+        settingsDialog.add(taskNameField);
+        settingsDialog.add(addTaskButton);
+
+        // 既存の taskListModel を使用
+        JList<String> taskListView = new JList<>(taskListModel);
+        settingsDialog.add(new JScrollPane(taskListView));
+
+        // タスク追加ボタンのアクションリスナー
+        addTaskButton.addActionListener(e -> {
+            String taskName = taskNameField.getText().trim();
+            if (!taskName.isEmpty()) {
+                taskListModel.addElement(taskName + " (uncompleted)");
+                taskList.add(new Task(taskName));
+                taskNameField.setText(""); // テキストフィールドをクリア
+            }
+        });
     }
 
 
