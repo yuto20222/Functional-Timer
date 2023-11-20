@@ -3,20 +3,20 @@
         "longBreakDuration": 1,
         "isRunning": true,
         "isOnBreak": false,
-        "currentDuration": 48,
+        "currentDuration": 28,
         "shortBreakDuration": 1,
         "workDuration": 1,
         "statistics": {
             "totalWorkTime": 0,
             "completedSessions": 0,
             "tasks": [{
-                "taskName": "3333",
+                "taskName": "jkhkhjkh",
                 "isCompleted": true
             }]
         }
     },
     "tasks": [{
-        "taskName": "aaaa",
+        "taskName": "uyuyu",
         "isCompleted": false
     }]
 }

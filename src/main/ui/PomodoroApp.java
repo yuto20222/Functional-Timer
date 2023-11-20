@@ -2,8 +2,6 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import model.PomodoroSession;
 import model.Statistics;
 import model.Task;
@@ -67,6 +65,68 @@ public class PomodoroApp {
         frame.setSize(500, 400);
         frame.setLayout(new FlowLayout()); // レイアウトの設定
 
+        initializeTaskInputComponents();
+        initializeTaskListView();
+        initializeStatisticsButton();
+        initializeSaveButton();
+        initializeLoadButton();
+        initializeTimerComponents();
+
+        frame.setVisible(true); // GUIを表示
+    }
+
+    /*
+     * MODIFIES: this
+     * EFFECTS: Updates the timer label to immediately reflect the current time of the session.
+     */
+    private void updateTimerLabelImmediately() {
+        if (session != null && timerLabel != null) {
+            int currentTime = session.getCurrentDuration();
+            int minutes = currentTime / 60;
+            int seconds = currentTime % 60;
+            timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
+        }
+    }
+
+    /*
+     * EFFECTS: If a session exists, displays the current settings of the Pomodoro session in a dialog window.
+     */
+    private void showCurrentSettings() {
+        if (session != null) {
+            String settingsMessage = String.format("Current settings：\nWorking time：%d sec\nShort Break：%d sec\nLong Break：%d sec",
+                    session.getWorkDuration(),
+                    session.getShortBreakDuration(),
+                    session.getLongBreakDuration());
+            JOptionPane.showMessageDialog(frame, settingsMessage, "Current settings", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /*
+     * MODIFIES: this
+     * EFFECTS: Starts or restarts the sessionMonitorTimer to update the timerLabel every second
+     *          with the current time from the session.
+     *          If a sessionMonitorTimer is already running, it is first cancelled.
+     */
+    private void updateTimerLabel() {
+        if (sessionMonitorTimer != null) {
+            sessionMonitorTimer.cancel();
+        }
+        sessionMonitorTimer = new Timer();
+        sessionMonitorTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (session != null && timerLabel != null) {
+                    int currentTime = session.getCurrentDuration();
+                    int minutes = currentTime / 60;
+                    int seconds = currentTime % 60;
+                    SwingUtilities.invokeLater(() -> timerLabel.setText(String.format("%02d:%02d", minutes, seconds)));
+                }
+            }
+        }, 0, 1000); // 毎秒更新
+    }
+
+    private void initializeTaskInputComponents() {
+        // タスク入力用テキストフィールドとボタンの初期化
         // タスク入力用テキストフィールド
         taskField = new JTextField(20);
         frame.add(taskField);
@@ -75,7 +135,10 @@ public class PomodoroApp {
         addTaskButton = new JButton("Add Task");
         addTaskButton.addActionListener(e -> addTask());
         frame.add(addTaskButton);
+    }
 
+    private void initializeTaskListView() {
+        // タスクリストビューの初期化
         // タスクリストモデルとビュー
         taskListModel = new DefaultListModel<>();
         taskListView = new JList<>(taskListModel);
@@ -88,12 +151,17 @@ public class PomodoroApp {
         markCompletedButton = new JButton("Mark as Completed");
         markCompletedButton.addActionListener(e -> markTaskAsCompleted());
         frame.add(markCompletedButton);
+    }
 
+    private void initializeStatisticsButton() {
+        // 統計表示ボタンの初期化
         //statボタン
         JButton statsButton = new JButton("View Statistics");
         statsButton.addActionListener(e -> showStatistics());
         frame.add(statsButton);
+    }
 
+    private void initializeSaveButton() {
         // セーブボタン
         saveButton = new JButton("Save Session");
         saveButton.addActionListener(e -> {
@@ -101,13 +169,16 @@ public class PomodoroApp {
                 jsonWriter.open();
                 jsonWriter.write(session, taskList);
                 jsonWriter.close();
-                JOptionPane.showMessageDialog(frame, "Session successfully saved.", "Successful", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Session successfully saved.",
+                        "Successful", JOptionPane.INFORMATION_MESSAGE);
             } catch (FileNotFoundException ex) {
                 JOptionPane.showMessageDialog(frame, "Could not save to file.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         frame.add(saveButton);
+    }
 
+    private void initializeLoadButton() {
         // ロードボタン
         loadButton = new JButton("Load Session");
         loadButton.addActionListener(e -> {
@@ -115,33 +186,33 @@ public class PomodoroApp {
                 session = jsonReader.readPomodoroSession();
                 statistics = session.getStatistics(); // 最新のStatisticsを設定
                 taskList = jsonReader.readTasks();
-
                 // タスクリストモデルを更新
                 taskListModel.clear(); // まず既存のリストをクリアする
-
                 List<Task> completedTasks = statistics.getCompletedTaskList();
                 for (Task task : completedTasks) {
                     String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
                     taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
                 }
-
                 for (Task task : taskList) {
                     String taskStatus = task.isCompleted() ? " (completed)" : " (uncompleted)";
                     taskListModel.addElement(task.getTaskName() + taskStatus); // 新しいタスクを追加
                 }
-
                 if (session.isRunning()) {
                     session.startTimer();
                     updateTimerLabelImmediately(); // タイマーラベルを即座に更新するメソッドを追加
                 }
-
-                JOptionPane.showMessageDialog(frame, "Session loaded successfully.", "Successful", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Session loaded successfully.",
+                        "Successful", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(frame, "Failed to read from file.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Failed to read from file.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         frame.add(loadButton);
+    }
 
+    private void initializeTimerComponents() {
+        // タイマーラベルと制御ボタンの初期化
         // タイマーラベル
         timerLabel = new JLabel("00:00");
         frame.add(timerLabel);
@@ -208,56 +279,6 @@ public class PomodoroApp {
             }
         });
         frame.add(stopTimerButton);
-        frame.setVisible(true); // GUIを表示
-    }
-
-    /*
-     * MODIFIES: this
-     * EFFECTS: Updates the timer label to immediately reflect the current time of the session.
-     */
-    private void updateTimerLabelImmediately() {
-        if (session != null && timerLabel != null) {
-            int currentTime = session.getCurrentDuration();
-            int minutes = currentTime / 60;
-            int seconds = currentTime % 60;
-            timerLabel.setText(String.format("%02d:%02d", minutes, seconds));
-        }
-    }
-
-    /*
-     * EFFECTS: If a session exists, displays the current settings of the Pomodoro session in a dialog window.
-     */
-    private void showCurrentSettings() {
-        if (session != null) {
-            String settingsMessage = String.format("Current settings：\nWorking time：%d sec\nShort Break：%d sec\nLong Break：%d sec",
-                    session.getWorkDuration(),
-                    session.getShortBreakDuration(),
-                    session.getLongBreakDuration());
-            JOptionPane.showMessageDialog(frame, settingsMessage, "Current settings", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    /*
-     * MODIFIES: this
-     * EFFECTS: Starts or restarts the sessionMonitorTimer to update the timerLabel every second
-     *          with the current time from the session. If a sessionMonitorTimer is already running, it is first cancelled.
-     */
-    private void updateTimerLabel() {
-        if (sessionMonitorTimer != null) {
-            sessionMonitorTimer.cancel();
-        }
-        sessionMonitorTimer = new Timer();
-        sessionMonitorTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if (session != null && timerLabel != null) {
-                    int currentTime = session.getCurrentDuration();
-                    int minutes = currentTime / 60;
-                    int seconds = currentTime % 60;
-                    SwingUtilities.invokeLater(() -> timerLabel.setText(String.format("%02d:%02d", minutes, seconds)));
-                }
-            }
-        }, 0, 1000); // 毎秒更新
     }
 
     /*
@@ -380,9 +401,11 @@ public class PomodoroApp {
                 session.startTimer();
             }
 
-            JOptionPane.showMessageDialog(frame, "Session loaded successfully.", "Successful", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Session loaded successfully.",
+                    "Successful", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(frame, "Failed to read from file.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Failed to read from file.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -430,9 +453,12 @@ public class PomodoroApp {
 
     /*
      * MODIFIES: this
-     * EFFECTS: Opens a dialog for the user to enter the settings for work duration, short break, and long break durations,
-     *          as well as to add new tasks. Updates session settings and task list based on user input.
-     *          Validates numerical input and handles incorrect formats with an error message.
+     * EFFECTS: Opens a dialog for the user to enter the settings for work duration,
+     *          short break, and long break durations,
+     *          as well as to add new tasks.
+     *          Updates session settings and task list based on user input.
+     *          Validates numerical input
+     *          and handles incorrect formats with an error message.
      */
     private void showSettingsAndTaskDialog() {
         JDialog settingsDialog = new JDialog(frame, "Settings and Tasks", true);
@@ -679,10 +705,12 @@ public class PomodoroApp {
                 if (session != null) {
                     if (session.isOnBreak() && !wasOnBreak) {
                         // 休憩が始まったとき
-                        JOptionPane.showMessageDialog(frame, "A break has begun!", "Break begins", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, "A break has begun!",
+                                "Break begins", JOptionPane.INFORMATION_MESSAGE);
                     } else if (!session.isOnBreak() && wasOnBreak) {
                         // 休憩が終わったとき
-                        JOptionPane.showMessageDialog(frame, "Break is over. Let's resume work!", "End of break", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, "Break is over. Let's resume work!",
+                                "End of break", JOptionPane.INFORMATION_MESSAGE);
                     }
                     wasOnBreak = session.isOnBreak();
                 }
