@@ -28,8 +28,11 @@
 - As a user, I want to reload my saved timer condition, statistics, and finished tasks from a file.
 
 # Instructions for Grader
-- You can generate the first required action related to the user story "adding Nes Tasks to Pomodoro session(List of Task)" by clicking the button labelled "Add Task"
-- You can generate the second required action related to the user story "adding multiple Xs to a Y" 
-- You can locate my visual component by...
+- You can generate the first required action related to the user story "adding New Tasks to Pomodoro session(List of Task)" by clicking the button labelled "Add Task"
+- You can generate the second required action related to the user story "change task's status from "Uncompleted" to "Completed"(in List of Tasks):" by pressing the button labelled "Mark As Completed" while selecting a task().
 - You can save the state of my application by clicking "Save Session" button
 - You can reload the state of my application clicking "Load Session" button
+- You can put however many tasks you want and set each session time(Work Duration, Short Break Duration, and Long Break Duration) on the first window with the button labelled "Confirm Settings".
+- You can check how many work session you have finished so far by clicking the button labelled "View Statistics"
+- You can reset just Timer by clicking the button labelled "Reset Timer" 
+- You can stop Timer by clicking the button labelled "Stop Timer" 
