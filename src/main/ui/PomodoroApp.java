@@ -131,6 +131,11 @@ public class PomodoroApp {
         }, 0, 1000);
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes the components for task input, including the taskField and addTaskButton.
+     *          Adds these components to the frame.
+     */
     private void initializeTaskInputComponents() {
         // Initialization of text fields and buttons for task entry
         // Text field for task input
@@ -143,6 +148,11 @@ public class PomodoroApp {
         frame.add(addTaskButton);
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes the components for displaying the task list, including the taskListModel, taskListView,
+     *          and markCompletedButton. Adds these components to the frame.
+     */
     private void initializeTaskListView() {
         // Initialization of task list view
         // Task List Models and Views
@@ -159,6 +169,11 @@ public class PomodoroApp {
         frame.add(markCompletedButton);
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes and adds the statistics display button to the frame.
+     *          Sets up the action listener for the button.
+     */
     private void initializeStatisticsButton() {
         // Initialize Statistics Display Button
         // stat button
@@ -167,6 +182,11 @@ public class PomodoroApp {
         frame.add(statsButton);
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes and adds the save session button to the frame.
+     *          Sets up the action listener for the button to save the current session state to a file.
+     */
     private void initializeSaveButton() {
         // saving button
         saveButton = new JButton("Save Session");
@@ -184,6 +204,11 @@ public class PomodoroApp {
         frame.add(saveButton);
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes and adds the load session button to the frame.
+     *          Sets up the action listener for the button to load a session state from a file.
+     */
     private void initializeLoadButton() {
         // initialize loading button
         loadButton = new JButton("Load Session");
@@ -191,6 +216,11 @@ public class PomodoroApp {
         frame.add(loadButton);
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes and adds the load session button to the frame.
+     *          Sets up the action listener for the button to load a session state from a file.
+     */
     private void loadSession() {
         // Execution of load processing
         try {
@@ -230,12 +260,18 @@ public class PomodoroApp {
         frame.add(timerLabel);
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes and adds the reset timer button to the frame.
+     *          Sets up the action listener for the button to reset the timer.
+     */
     private void initializeResetTimerButton() {
         // Reset timer button initialization
         JButton resetTimerButton = new JButton("Reset Timer");
         resetTimerButton.addActionListener(e -> resetTimer());
         frame.add(resetTimerButton);
     }
+
 
     private void resetTimer() {
         if (session == null) {
@@ -270,12 +306,18 @@ public class PomodoroApp {
         showCurrentSettings();
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes and adds the stop timer button to the frame.
+     *          Sets up the action listener for the button to stop the timer.
+     */
     private void initializeStopTimerButton() {
         // Initialize stop timer button
         JButton stopTimerButton = new JButton("Stop Timer");
         stopTimerButton.addActionListener(e -> stopTimer());
         frame.add(stopTimerButton);
     }
+
 
     private void stopTimer() {
         // Stop Timer Button Action
@@ -505,12 +547,8 @@ public class PomodoroApp {
 
     /*
      * MODIFIES: this
-     * EFFECTS: Opens a dialog for the user to enter the settings for work duration,
-     *          short break, and long break durations,
-     *          as well as to add new tasks.
-     *          Updates session settings and task list based on user input.
-     *          Validates numerical input
-     *          and handles incorrect formats with an error message.
+     * EFFECTS: Opens a dialog box for the user to enter settings for the Pomodoro session and to add tasks.
+     *          Validates input and updates session settings and task list based on user input.
      */
     private void showSettingsAndTaskDialog() {
         JDialog settingsDialog = new JDialog(frame, "Settings and Tasks", true);
@@ -529,6 +567,11 @@ public class PomodoroApp {
         settingsDialog.setVisible(true);
     }
 
+    /*
+     * EFFECTS: Creates and adds text fields for entering work, short break,
+     *          and long break durations to the settings dialog.
+     *          Returns an array of JTextField objects for these settings.
+     */
     private JTextField[] initializeSettingsFields(JDialog settingsDialog) {
         // Text field for configuration
         JTextField workField = new JTextField(5);
@@ -547,6 +590,11 @@ public class PomodoroApp {
         return new JTextField[]{workField, shortBreakField, longBreakField};
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes and adds a confirm settings button to the settings dialog.
+     *          Sets up the action listener to update session settings based on input values in the text fields.
+     */
     private void initializeConfirmSettingsButton(JDialog settingsDialog, JTextField workField,
                                                  JTextField shortBreakField, JTextField longBreakField) {
         // Set button
@@ -567,6 +615,12 @@ public class PomodoroApp {
         });
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes components for task input within the settings dialog,
+     *          including a text field for task names and a button to add tasks.
+     *          Adds these components to the settings dialog.
+     */
     private void initializeTaskInputComponents2(JDialog settingsDialog) {
         // Initialize text fields and buttons for tasks
         JTextField taskNameField = new JTextField(20);
