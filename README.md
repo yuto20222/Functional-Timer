@@ -22,6 +22,7 @@
 - As a user, I want to be able to reset a Pomodoro Timer(just Timer): // difficult
 - As a user, I want to be able to pause and resume a Pomodoro session:
 - As a user, I want to be able to add a new task to my Pomodoro session(List of Tasks):
+- As a user, I want to be able to change task's status from "Uncompleted" to "Completed"(in List of Tasks):
 
 - As a user, I want to save my current timer condition, statistics, and finished tasks to a file.
 - As a user, I want to reload my saved timer condition, statistics, and finished tasks from a file.
