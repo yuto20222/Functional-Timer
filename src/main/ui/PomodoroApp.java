@@ -218,8 +218,10 @@ public class PomodoroApp {
 
     /*
      * MODIFIES: this
-     * EFFECTS: Initializes and adds the load session button to the frame.
-     *          Sets up the action listener for the button to load a session state from a file.
+     * EFFECTS: Loads the Pomodoro session and task list from a file.
+     *          Updates session, statistics, and task list based on the loaded data.
+     *          If the session is running, starts the timer and updates the timer label.
+     *          Notifies the user about the success or failure of the operation.
      */
     private void loadSession() {
         // Execution of load processing
@@ -240,6 +242,10 @@ public class PomodoroApp {
         }
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Updates the task list model with the current tasks and their completion status.
+     */
     private void updateTaskListModel() {
         // Update task list model
         taskListModel.clear(); // Clear the existing list first.
@@ -254,6 +260,10 @@ public class PomodoroApp {
         }
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Initializes and adds the timer label to the frame.
+     */
     private void initializeTimerLabel() {
         // Initialization of timer labels
         timerLabel = new JLabel("00:00");
@@ -272,7 +282,11 @@ public class PomodoroApp {
         frame.add(resetTimerButton);
     }
 
-
+    /*
+     * MODIFIES: this
+     * EFFECTS: Resets the timer of the current session.
+     *          Asks the user to either continue or exit the application after the reset.
+     */
     private void resetTimer() {
         if (session == null) {
             return; // Early Return
@@ -293,12 +307,21 @@ public class PomodoroApp {
         }
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Cancels the existing session monitor timer if it is running.
+     */
     private void cancelExistingTimer() {
         if (sessionMonitorTimer != null) {
             sessionMonitorTimer.cancel();
         }
     }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Restarts the work session and updates the timer label after a reset.
+     *          Displays the current settings to the user.
+     */
     private void continueAfterReset() {
         session.startWork();
         updateTimerLabel();
@@ -318,7 +341,11 @@ public class PomodoroApp {
         frame.add(stopTimerButton);
     }
 
-
+    /*
+     * MODIFIES: this
+     * EFFECTS: Stops the current timer and session.
+     *          Prompts the user to either resume the session or exit the application.
+     */
     private void stopTimer() {
         // Stop Timer Button Action
         if (session != null) {
@@ -368,6 +395,12 @@ public class PomodoroApp {
 //        }
 //    }
 
+    /*
+     * MODIFIES: this
+     * EFFECTS: Marks the selected task as completed. Updates the task list model to reflect this change.
+     *          If no task is selected or the selected task is not in the task list, shows an error message.
+     *          Removes the completed task from the task list and adds it to the completed tasks in statistics.
+     */
     private void markTaskAsCompleted() {
         int selectedIndex = taskListView.getSelectedIndex();
         if (selectedIndex < 0 || selectedIndex >= taskListModel.size()) {
