@@ -175,8 +175,11 @@ class JsonReaderTest extends JsonTest {
             stats.addCompletedSession();
             stats.addTotalWorkTime(150);
             Task completedTask = new Task("Completed Task");
+            Task completedTask2 = new Task("Completed Task");
             completedTask.markIfCompleted();
+            completedTask2.markIfCompleted();
             stats.addCompletedTaskList(completedTask);
+            stats.addCompletedTaskList(completedTask2);
 
             PomodoroSession session = new PomodoroSession(25, 5, 15, stats);
             JsonWriter writer = new JsonWriter("./data/testParseStatisticsWithTasks.json");
@@ -192,7 +195,7 @@ class JsonReaderTest extends JsonTest {
             // Check if the statistics and tasks read are as expected
             assertEquals(1, readStats.getCompletedSessions());
             assertEquals(150, readStats.getTotalWorkTime());
-            assertEquals(1, readStats.getCompletedTaskList().size());
+            assertEquals(2, readStats.getCompletedTaskList().size());
             assertTrue(readStats.getCompletedTaskList().get(0).isCompleted());
             assertEquals("Completed Task", readStats.getCompletedTaskList().get(0).getTaskName());
 
@@ -231,28 +234,5 @@ class JsonReaderTest extends JsonTest {
     }
 
 
-//    @Test
-//    void testAddCompletedTasks() {
-//        JsonReader jsonReader = new JsonReader("dummyPath");
-//        JSONObject testJson = new JSONObject();
-//        JSONArray tasksArray = new JSONArray();
-//
-//        // Add two tasks
-//        JSONObject task1 = new JSONObject();
-//        task1.put("name", "Test Task 1");
-//        tasksArray.put(task1);
-//
-//        JSONObject task2 = new JSONObject();
-//        task2.put("name", "Test Task 2");
-//        tasksArray.put(task2);
-//
-//        testJson.put("tasks", tasksArray);
-//
-//        Statistics stats = new Statistics();
-//        jsonReader.addCompletedTasks(stats, testJson);
-//
-//        // Assuming Statistics class has a method to get the size of completed tasks.
-//        assertEquals(2, stats.getCompletedTaskSize());
-//    }
 
 }
