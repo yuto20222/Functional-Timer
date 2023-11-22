@@ -36,3 +36,4 @@
 - You can check how many work session you have finished so far by clicking the button labelled "View Statistics"
 - You can reset just Timer by clicking the button labelled "Reset Timer" 
 - You can stop Timer by clicking the button labelled "Stop Timer" 
+- You can find the visual component after clicking the button labelled "Confirm Setting"
