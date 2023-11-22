@@ -377,6 +377,32 @@ public class PomodoroApp {
     }
 
     /*
+     * EFFECTS: Displays a modal dialog with a fun image and a message instructing
+     *          the user to close the dialog to start work.
+     *          The dialog is centered relative to the main application frame.
+     *          The dialog is set to be modal, which blocks user input to other
+     *          windows of the application until it is closed.
+     *          The image is loaded from the 'ui' package within the classpath.
+     */
+    private void showFunImage() {
+        // Load the image from the 'ui' package
+        ImageIcon imageIcon = new ImageIcon(getClass().getResource("/ui/image.jpeg"));
+        JLabel imageLabel = new JLabel(imageIcon);
+
+        // Create a label with the message
+        JLabel messageLabel = new JLabel("Close this window to start work");
+        messageLabel.setHorizontalAlignment(JLabel.CENTER); // Center the text
+
+        // Create and display the dialog
+        JDialog imageDialog = new JDialog(frame, "Ready to Start!", true);
+        imageDialog.setLayout(new BorderLayout());
+        imageDialog.add(imageLabel, BorderLayout.CENTER);
+        imageDialog.add(messageLabel, BorderLayout.SOUTH);
+        imageDialog.pack();
+        imageDialog.setLocationRelativeTo(frame);
+        imageDialog.setVisible(true);
+    }
+    /*
      * MODIFIES: this
      * EFFECTS: Marks a selected task as completed and updates the task list model accordingly.
      */
@@ -436,6 +462,7 @@ public class PomodoroApp {
      */
     private void runApp() {
         firstSetting();
+        showFunImage();
         start();
 
         while (keepGoing) {
