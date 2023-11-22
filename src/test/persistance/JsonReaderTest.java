@@ -112,6 +112,61 @@ class JsonReaderTest extends JsonTest {
         assertThrows(IOException.class, reader::readTasks);
     }
 
+    @Test
+    void testParseTask() {
+        try {
+            // Set up a task list and write it to a file
+            List<Task> tasks = new ArrayList<>();
+            tasks.add(new Task("Test Task"));
+            tasks.get(0).markIfCompleted(); // Marking the task as completed
+
+            JsonWriter writer = new JsonWriter("./data/testParseTask.json");
+            writer.open();
+            writer.write(new PomodoroSession(25, 5, 15, new Statistics()), tasks);
+            writer.close();
+
+            // Reading the task back
+            JsonReader reader = new JsonReader("./data/testParseTask.json");
+            List<Task> readTasks = reader.readTasks();
+
+            // Check if the task read is as expected
+            assertEquals(1, readTasks.size());
+            assertTrue(readTasks.get(0).isCompleted());
+            assertEquals("Test Task", readTasks.get(0).getTaskName());
+
+        } catch (IOException e) {
+            fail("IOException should not have been thrown");
+        }
+    }
+
+    @Test
+    void testParseStatistics() {
+        try {
+            // Set up a PomodoroSession with specific Statistics and write it to a file
+            Statistics stats = new Statistics();
+            stats.addCompletedSession();
+            stats.addTotalWorkTime(150);
+
+            PomodoroSession session = new PomodoroSession(25, 5, 15, stats);
+            JsonWriter writer = new JsonWriter("./data/testParseStatistics.json");
+            writer.open();
+            writer.write(session, new ArrayList<>());
+            writer.close();
+
+            // Reading the session back
+            JsonReader reader = new JsonReader("./data/testParseStatistics.json");
+            PomodoroSession readSession = reader.readPomodoroSession();
+            Statistics readStats = readSession.getStatistics();
+
+            // Check if the statistics read are as expected
+            assertEquals(1, readStats.getCompletedSessions());
+            assertEquals(150, readStats.getTotalWorkTime());
+
+        } catch (IOException e) {
+            fail("IOException should not have been thrown");
+        }
+    }
+
 //    @Test
 //    void testAddCompletedTasks() {
 //        JsonReader jsonReader = new JsonReader("dummyPath");
