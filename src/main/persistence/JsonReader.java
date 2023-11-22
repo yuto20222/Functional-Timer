@@ -120,7 +120,7 @@ public class JsonReader {
 //    }
 
     // EFFECTS: parses Statistics from JSON object and returns it
-    private Statistics parseStatistics(JSONObject jsonObject) {
+    public Statistics parseStatistics(JSONObject jsonObject) {
         int totalWorkTime = jsonObject.optInt("totalWorkTime", 0); // default
         int completedSessions = jsonObject.optInt("completedSessions", 0); // default
 

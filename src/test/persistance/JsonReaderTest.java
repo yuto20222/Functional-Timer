@@ -233,4 +233,42 @@ class JsonReaderTest extends JsonTest {
         }
     }
 
+    @Test
+    void testParseStatisticsWithTasks2() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("totalWorkTime", 150);
+        jsonObject.put("completedSessions", 1);
+
+        JSONArray tasksArray = new JSONArray();
+        JSONObject taskObject1 = new JSONObject();
+        taskObject1.put("taskName", "Task 1");
+        taskObject1.put("isCompleted", true);
+        tasksArray.put(taskObject1);
+
+        jsonObject.put("tasks", tasksArray);
+
+        JsonReader jsonReader = new JsonReader("dummyPath"); // Use a mock path or setup accordingly
+        Statistics stats = jsonReader.parseStatistics(jsonObject);
+
+        assertEquals(150, stats.getTotalWorkTime());
+        assertEquals(1, stats.getCompletedSessions());
+        assertEquals(1, stats.getCompletedTaskList().size());
+        assertTrue(stats.getCompletedTaskList().get(0).isCompleted());
+        assertEquals("Task 1", stats.getCompletedTaskList().get(0).getTaskName());
+    }
+
+    @Test
+    void testParseStatisticsWithoutTasks2() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("totalWorkTime", 150);
+        jsonObject.put("completedSessions", 1);
+        // 'tasks' array is not added
+
+        JsonReader jsonReader = new JsonReader("dummyPath"); // Use a mock path or setup accordingly
+        Statistics stats = jsonReader.parseStatistics(jsonObject);
+
+        assertEquals(150, stats.getTotalWorkTime());
+        assertEquals(1, stats.getCompletedSessions());
+        assertTrue(stats.getCompletedTaskList().isEmpty());
+    }
 }
