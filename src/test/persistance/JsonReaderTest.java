@@ -167,6 +167,70 @@ class JsonReaderTest extends JsonTest {
         }
     }
 
+    @Test
+    void testParseStatisticsWithTasks() {
+        try {
+            // Set up Statistics with tasks and write it to a file
+            Statistics stats = new Statistics();
+            stats.addCompletedSession();
+            stats.addTotalWorkTime(150);
+            Task completedTask = new Task("Completed Task");
+            completedTask.markIfCompleted();
+            stats.addCompletedTaskList(completedTask);
+
+            PomodoroSession session = new PomodoroSession(25, 5, 15, stats);
+            JsonWriter writer = new JsonWriter("./data/testParseStatisticsWithTasks.json");
+            writer.open();
+            writer.write(session, new ArrayList<>());
+            writer.close();
+
+            // Reading the session back
+            JsonReader reader = new JsonReader("./data/testParseStatisticsWithTasks.json");
+            PomodoroSession readSession = reader.readPomodoroSession();
+            Statistics readStats = readSession.getStatistics();
+
+            // Check if the statistics and tasks read are as expected
+            assertEquals(1, readStats.getCompletedSessions());
+            assertEquals(150, readStats.getTotalWorkTime());
+            assertEquals(1, readStats.getCompletedTaskList().size());
+            assertTrue(readStats.getCompletedTaskList().get(0).isCompleted());
+            assertEquals("Completed Task", readStats.getCompletedTaskList().get(0).getTaskName());
+
+        } catch (IOException e) {
+            fail("IOException should not have been thrown");
+        }
+    }
+
+    @Test
+    void testParseStatisticsWithoutTasks() {
+        try {
+            // Set up Statistics without tasks and write it to a file
+            Statistics stats = new Statistics();
+            stats.addCompletedSession();
+            stats.addTotalWorkTime(150);
+
+            PomodoroSession session = new PomodoroSession(25, 5, 15, stats);
+            JsonWriter writer = new JsonWriter("./data/testParseStatisticsWithoutTasks.json");
+            writer.open();
+            writer.write(session, new ArrayList<>());
+            writer.close();
+
+            // Reading the session back
+            JsonReader reader = new JsonReader("./data/testParseStatisticsWithoutTasks.json");
+            PomodoroSession readSession = reader.readPomodoroSession();
+            Statistics readStats = readSession.getStatistics();
+
+            // Check if the statistics read are as expected, and no tasks are included
+            assertEquals(1, readStats.getCompletedSessions());
+            assertEquals(150, readStats.getTotalWorkTime());
+            assertEquals(0, readStats.getCompletedTaskList().size());
+
+        } catch (IOException e) {
+            fail("IOException should not have been thrown");
+        }
+    }
+
+
 //    @Test
 //    void testAddCompletedTasks() {
 //        JsonReader jsonReader = new JsonReader("dummyPath");
