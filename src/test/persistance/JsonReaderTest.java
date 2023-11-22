@@ -226,13 +226,11 @@ class JsonReaderTest extends JsonTest {
             // Check if the statistics read are as expected, and no tasks are included
             assertEquals(1, readStats.getCompletedSessions());
             assertEquals(150, readStats.getTotalWorkTime());
-            assertEquals(0, readStats.getCompletedTaskList().size());
+            assertTrue(readStats.getCompletedTaskList().isEmpty());
 
         } catch (IOException e) {
             fail("IOException should not have been thrown");
         }
     }
-
-
 
 }
