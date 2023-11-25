@@ -1,5 +1,8 @@
 package model;
 
+import model.Event;
+import model.EventLog;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
@@ -47,6 +50,9 @@ public class Statistics implements Writable {
      */
     public void addCompletedTaskList(Task task) {
         this.completedTaskList.add(task);
+
+        // for event log
+        EventLog.getInstance().logEvent(new Event("Completed Task added to the stat: " + task.getTaskName()));
     }
 
     /*

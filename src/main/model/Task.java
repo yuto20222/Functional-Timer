@@ -3,6 +3,8 @@ package model;
 import org.json.JSONObject;
 import persistence.Writable;
 
+import model.Event;
+import model.EventLog;
 
 // Represents a task with a specific name.
 // Keeps track of the task's completion status.
@@ -17,6 +19,7 @@ public class Task implements Writable {
     public Task(String taskName) {
         this.taskName = taskName;
         this.isCompleted = false;
+        EventLog.getInstance().logEvent(new Event("Uncompleted Task is added: " + this.taskName));
     }
 
     /*
@@ -25,6 +28,8 @@ public class Task implements Writable {
      */
     public void markIfCompleted() {
         this.isCompleted = true;
+        // Recorded in event log
+        EventLog.getInstance().logEvent(new Event("Uncompleted Task is completed: " + this.taskName));
     }
 
     /*

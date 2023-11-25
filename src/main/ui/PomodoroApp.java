@@ -2,12 +2,17 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
+
+import model.Event;
+import model.EventLog;
 import model.PomodoroSession;
 import model.Statistics;
 import model.Task;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,12 +34,12 @@ public class PomodoroApp {
     private DefaultListModel<String> taskListModel;
     private JList<String> taskListView; //for tasks
     private JButton markCompletedButton; //for tasks
-//    private JTextField workField;
+    //    private JTextField workField;
 //    private JTextField shortBreakField;
 //    private JTextField longBreakField;
     private PomodoroSession session;
-    private Statistics statistics;
-    private List<Task> taskList;
+    private Statistics statistics; //has completed task
+    private List<Task> taskList; //uncompleted task
     private final Scanner input;
     boolean keepGoing = true;
     private static final String JSON_STORE = "./data/pomodoro.json";
@@ -76,6 +81,15 @@ public class PomodoroApp {
         initializeTimerLabel();
         initializeResetTimerButton();
         initializeStopTimerButton();
+
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                onApplicationExit(); // イベントログを出力
+                System.exit(0); // アプリケーションを終了
+            }
+        });
 
         frame.setVisible(true); // show GUI
     }
@@ -303,6 +317,7 @@ public class PomodoroApp {
         if (result == JOptionPane.YES_OPTION) {
             continueAfterReset();
         } else {
+            onApplicationExit();
             System.exit(0);
         }
     }
@@ -371,6 +386,7 @@ public class PomodoroApp {
                 show(taskList.size());
             } else {
                 // When leaving
+                onApplicationExit();
                 System.exit(0);
             }
         }
@@ -902,5 +918,13 @@ public class PomodoroApp {
                 }
             }
         }, 0, 1000); //check every second
+    }
+
+    // Add to the end processing part of the application
+    public void onApplicationExit() {
+        // Output event log
+        for (Event e : EventLog.getInstance()) {
+            System.out.println(e);
+        }
     }
 }

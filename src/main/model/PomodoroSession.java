@@ -1,5 +1,7 @@
 package model;
 
+import model.Event;
+import model.EventLog;
 import org.json.JSONObject;
 import persistence.Writable;
 
