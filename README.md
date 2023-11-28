@@ -49,4 +49,4 @@
   Completed Task added to the stat: uncompletedButChangedtoCompleted
 
 # Phase 4: Task 2
--
+- The Statistics class is handling multiple responsibilities (tracking sessions, work time, and task completion). I should have considered of splitting these into separate classes (e.g., SessionStatistics, TaskStatistics) for better modularity.
