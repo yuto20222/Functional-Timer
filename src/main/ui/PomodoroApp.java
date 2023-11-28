@@ -481,17 +481,17 @@ public class PomodoroApp {
         showFunImage();
         start();
 
-        while (keepGoing) {
-            displayMenu();
-            int command = input.nextInt();
-            if (0 <= command && command <= 2) {
-                processCommand(command);
-            } else if (3 <= command && command <= 4) {
-                options1(command);
-            } else if (5 <= command && command <= 6) {
-                options2(command);
-            }
-        }
+//        while (keepGoing) {
+//            displayMenu();
+//            int command = input.nextInt();
+//            if (0 <= command && command <= 2) {
+//                processCommand(command);
+//            } else if (3 <= command && command <= 4) {
+//                options1(command);
+//            } else if (5 <= command && command <= 6) {
+//                options2(command);
+//            }
+//        }
     }
 
     /*

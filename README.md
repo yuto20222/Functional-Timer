@@ -37,3 +37,16 @@
 - You can reset just Timer by clicking the button labelled "Reset Timer" 
 - You can stop Timer by clicking the button labelled "Stop Timer" 
 - You can find the visual component after clicking the button labelled "Confirm Setting"
+
+# Phase 4: Task 2
+- Mon Nov 27 19:20:24 PST 2023
+  Uncompleted Task is added: uncompleted
+  Mon Nov 27 19:20:41 PST 2023
+  Uncompleted Task is added: uncompletedButChangedtoCompleted
+  Mon Nov 27 19:20:42 PST 2023
+  Uncompleted Task is completed: uncompletedButChangedtoCompleted
+  Mon Nov 27 19:20:42 PST 2023
+  Completed Task added to the stat: uncompletedButChangedtoCompleted
+
+# Phase 4: Task 2
+-
