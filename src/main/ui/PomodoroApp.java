@@ -86,8 +86,8 @@ public class PomodoroApp {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                onApplicationExit(); // イベントログを出力
-                System.exit(0); // アプリケーションを終了
+                onApplicationExit();
+                System.exit(0);
             }
         });
 
