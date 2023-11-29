@@ -48,7 +48,7 @@
   Mon Nov 27 19:20:42 PST 2023
   Completed Task added to the stat: uncompletedButChangedtoCompleted
 
-# Phase 4: Task 2
+# Phase 4: Task 3
 - In the next update of our Pomodoro Timer app, I'm planning to make some big changes to the code. The main goal is to make the code easier to understand and work with, especially as we add more features in the future.
 - Firstly, I noticed that the PomodoroApp class is doing too much - it handles both the user interface (UI) and the app's main functions. To fix this, I'm going to split it into two classes. A new class, PomodoroAppUI, will take care of all the UI stuff, like buttons and text fields. This will make the original PomodoroApp class simpler and just focused on the app's main tasks. It's like separating the kitchen and living room in a house, so each has its own clear space. Another thing I want to change is how tasks are managed in the PomodoroApp class. Right now, this class also deals with tasks, like adding and completing them. I plan to create a TaskManager class that will handle all these task-related jobs. This way, the PomodoroApp class won't be overloaded with too many responsibilities. Also, I'm thinking of making a new StatisticsController class. At the moment, PomodoroApp directly uses the Statistics class for tracking things like how many sessions you've completed. With StatisticsController, all the statistics stuff will be in one place, making it easier to handle and change if needed. By doing these changes, I'm hoping to make our code cleaner and more organized. This should help us a lot when we want to add new features or fix bugs in the future.
 
