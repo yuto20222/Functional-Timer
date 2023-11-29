@@ -74,6 +74,7 @@ public class Statistics implements Writable {
         return completedTaskList.size();
     }
 
+    // EFFECTS: Return the CompletedTaskList
     public List<Task> getCompletedTaskList() {
         return completedTaskList;
     }

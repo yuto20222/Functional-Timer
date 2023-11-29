@@ -920,7 +920,7 @@ public class PomodoroApp {
         }, 0, 1000); //check every second
     }
 
-    // Add to the end processing part of the application
+    // EFFECTS: Add to the end processing part of the application
     public void onApplicationExit() {
         // Output event log
         for (Event e : EventLog.getInstance()) {
